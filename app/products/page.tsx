@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { Suspense, useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { products } from "@/data/products";
 import ProductCard from "@/components/ProductCard";
 
-export default function ProductsPage() {
+function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -55,12 +55,8 @@ export default function ProductsPage() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* Hero */}
-
       <section className="bg-gradient-to-r from-blue-900 to-blue-700 py-20 text-white">
-
         <div className="mx-auto max-w-7xl px-6 text-center">
-
           <h1 className="text-5xl font-extrabold">
             Our Products
           </h1>
@@ -68,17 +64,11 @@ export default function ProductsPage() {
           <p className="mt-5 text-xl text-blue-100">
             Premium Dry Fruits • Healthy Seeds • Honey Collection
           </p>
-
         </div>
-
       </section>
 
-      {/* Search */}
-
       <section className="mx-auto mt-10 max-w-7xl px-6">
-
         <div className="relative">
-
           <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl">
             🔍
           </span>
@@ -99,19 +89,12 @@ export default function ProductsPage() {
               ×
             </button>
           )}
-
         </div>
-
       </section>
 
-      {/* Categories */}
-
       <section className="mx-auto mt-8 max-w-7xl px-6">
-
         <div className="flex flex-wrap gap-3">
-
           {categories.map((category) => (
-
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
@@ -123,50 +106,30 @@ export default function ProductsPage() {
             >
               {category}
             </button>
-
           ))}
-
         </div>
-
       </section>
 
-      {/* Product Count */}
-
       <section className="mx-auto mt-8 max-w-7xl px-6">
-
         <p className="text-lg font-semibold text-gray-600">
           Showing {filteredProducts.length} Product
           {filteredProducts.length !== 1 ? "s" : ""}
         </p>
-
       </section>
 
-      {/* Products */}
-
       <section className="mx-auto max-w-7xl px-6 py-10">
-
         {filteredProducts.length > 0 ? (
-
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-
             {filteredProducts.map((product) => (
-
               <ProductCard
                 key={product.id}
                 product={product}
               />
-
             ))}
-
           </div>
-
         ) : (
-
           <div className="rounded-3xl bg-white py-24 text-center shadow-lg">
-
-            <div className="text-6xl">
-              🔍
-            </div>
+            <div className="text-6xl">🔍</div>
 
             <h2 className="mt-6 text-3xl font-bold text-gray-700">
               No Products Found
@@ -185,13 +148,18 @@ export default function ProductsPage() {
             >
               Show All Products
             </button>
-
           </div>
-
         )}
-
       </section>
 
     </main>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading products...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }
