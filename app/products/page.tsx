@@ -1,116 +1,194 @@
-import Image from "next/image";
-import Link from "next/link";
-import { products } from "../../data/products";
+"use client";
+
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { products } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
 
 export default function ProductsPage() {
-  const categories = [...new Set(products.map((product) => product.category))];
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const categoryFromUrl = searchParams.get("category") || "All";
+
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    setSelectedCategory(categoryFromUrl);
+  }, [categoryFromUrl]);
+
+  const categories = [
+    "All",
+    ...new Set(products.map((product) => product.category)),
+  ];
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+
+    if (category === "All") {
+      router.push("/products");
+    } else {
+      router.replace(
+        `/products?category=${encodeURIComponent(category)}`
+      );
+    }
+  };
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesCategory =
+        selectedCategory === "All" ||
+        product.category === selectedCategory;
+
+      const keyword = search.toLowerCase();
+
+      const matchesSearch =
+        product.name.toLowerCase().includes(keyword) ||
+        product.category.toLowerCase().includes(keyword) ||
+        product.description.toLowerCase().includes(keyword);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [selectedCategory, search]);
 
   return (
     <main className="min-h-screen bg-gray-50">
 
       {/* Hero */}
-      <section className="bg-blue-900 text-white py-20">
-        <div className="max-w-7xl mx-auto px-6 text-center">
 
-          <h1 className="text-5xl font-bold">
+      <section className="bg-gradient-to-r from-blue-900 to-blue-700 py-20 text-white">
+
+        <div className="mx-auto max-w-7xl px-6 text-center">
+
+          <h1 className="text-5xl font-extrabold">
             Our Products
           </h1>
 
           <p className="mt-5 text-xl text-blue-100">
-            Premium dry fruits and carefully curated healthy products.
+            Premium Dry Fruits • Healthy Seeds • Honey Collection
           </p>
 
         </div>
+
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 py-16">
+      {/* Search */}
 
-        {categories.map((category) => (
-          <div key={category} className="mb-20">
+      <section className="mx-auto mt-10 max-w-7xl px-6">
 
-            <h2 className="text-4xl font-bold text-blue-900 mb-10">
-              {category}
-            </h2>
+        <div className="relative">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <span className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl">
+            🔍
+          </span>
 
-              {products
-                .filter((product) => product.category === category)
-                .map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300"
-                  >
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-2xl border-2 border-gray-300 bg-white py-5 pl-16 pr-16 text-lg text-black shadow-sm outline-none transition focus:border-[#0B3C8C] focus:ring-4 focus:ring-blue-100"
+          />
 
-                    <div className="relative h-72 bg-gray-100">
-
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
-
-                      {product.badge && (
-                        <span className="absolute top-4 left-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">
-                          {product.badge}
-                        </span>
-                      )}
-
-                    </div>
-
-                    <div className="p-8">
-
-                      <h3 className="text-2xl font-bold text-blue-900">
-                        {product.name}
-                      </h3>
-
-                      <p className="mt-4 text-gray-600 leading-7">
-                        {product.description}
-                      </p>
-
-                      <div className="flex flex-wrap gap-2 mt-6">
-
-                        {product.packs.map((pack) => (
-                          <span
-                            key={pack}
-                            className="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-sm"
-                          >
-                            {pack}
-                          </span>
-                        ))}
-
-                      </div>
-
-                      <a
-                        href="https://wa.me/916374626691"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block mt-8 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition"
-                      >
-                        Order via WhatsApp
-                      </a>
-
-                    </div>
-
-                  </div>
-                ))}
-
-            </div>
-
-          </div>
-        ))}
-
-        <div className="text-center mt-10">
-
-          <Link
-            href="/"
-            className="text-blue-900 font-semibold hover:underline"
-          >
-            ← Back to Home
-          </Link>
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-2xl text-gray-500 hover:text-red-500"
+            >
+              ×
+            </button>
+          )}
 
         </div>
+
+      </section>
+
+      {/* Categories */}
+
+      <section className="mx-auto mt-8 max-w-7xl px-6">
+
+        <div className="flex flex-wrap gap-3">
+
+          {categories.map((category) => (
+
+            <button
+              key={category}
+              onClick={() => handleCategoryChange(category)}
+              className={`rounded-full px-6 py-3 font-semibold transition ${
+                selectedCategory === category
+                  ? "bg-[#0B3C8C] text-white"
+                  : "border border-gray-300 bg-white text-gray-700 hover:border-[#0B3C8C] hover:text-[#0B3C8C]"
+              }`}
+            >
+              {category}
+            </button>
+
+          ))}
+
+        </div>
+
+      </section>
+
+      {/* Product Count */}
+
+      <section className="mx-auto mt-8 max-w-7xl px-6">
+
+        <p className="text-lg font-semibold text-gray-600">
+          Showing {filteredProducts.length} Product
+          {filteredProducts.length !== 1 ? "s" : ""}
+        </p>
+
+      </section>
+
+      {/* Products */}
+
+      <section className="mx-auto max-w-7xl px-6 py-10">
+
+        {filteredProducts.length > 0 ? (
+
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+
+            {filteredProducts.map((product) => (
+
+              <ProductCard
+                key={product.id}
+                product={product}
+              />
+
+            ))}
+
+          </div>
+
+        ) : (
+
+          <div className="rounded-3xl bg-white py-24 text-center shadow-lg">
+
+            <div className="text-6xl">
+              🔍
+            </div>
+
+            <h2 className="mt-6 text-3xl font-bold text-gray-700">
+              No Products Found
+            </h2>
+
+            <p className="mt-4 text-lg text-gray-500">
+              Try another search keyword.
+            </p>
+
+            <button
+              onClick={() => {
+                setSearch("");
+                handleCategoryChange("All");
+              }}
+              className="mt-8 rounded-full bg-[#0B3C8C] px-8 py-4 font-semibold text-white transition hover:bg-[#082F6D]"
+            >
+              Show All Products
+            </button>
+
+          </div>
+
+        )}
 
       </section>
 

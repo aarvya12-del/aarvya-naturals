@@ -1,71 +1,132 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const categories = [
   {
-    emoji: "🥜",
-    title: "Premium Nuts",
-    description: "Almonds, Cashews, Pistachios & Walnuts",
+    image: "/images/categories/dry-fruits.png",
+    title: "Premium Dry Fruits",
+    description: "Almonds, Cashews, Pistachios, Walnuts & Raisins",
+    products: "25+ Products",
     link: "/products",
   },
   {
-    emoji: "🌱",
+    image: "/images/categories/healthy-seeds.png",
     title: "Healthy Seeds",
-    description: "Pumpkin, Sunflower, Flax & Chia Seeds",
+    description: "Pumpkin, Sunflower, Flax, Chia & More",
+    products: "10+ Products",
     link: "/products",
   },
   {
-    emoji: "🍯",
-    title: "Honey Products",
-    description: "Natural Honey & Honey Infused Delights",
+    image: "/images/categories/honey-collection.png",
+    title: "Honey Collection",
+    description: "Honey Amla, Honey Fig & Nuts in Honey",
+    products: "6+ Products",
     link: "/products",
   },
   {
-    emoji: "🥭",
+    image: "/images/categories/red-wine.png",
+    title: "Non Alcoholic Red Wine",
+    description: "Premium Imported Non Alcoholic Red Wine",
+    products: "2 Variants",
+    link: "/products",
+  },
+  {
+    image: "/images/categories/combo-offers.png",
+    title: "Combo Offers",
+    description: "Healthy wellness combos for every lifestyle",
+    products: "14 Combos",
+    link: "/combo-offers",
+  },
+  {
+    image: "/images/categories/healthy-snacks.png",
     title: "Healthy Snacks",
-    description: "Dry Fruits, Fruit Snacks & Seed Mixes",
+    description: "Fruit Chips, Vegetable Chips & More",
+    products: "8+ Products",
     link: "/products",
   },
 ];
 
 export default function Categories() {
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-white py-24">
+      <div className="mx-auto max-w-7xl px-6">
+
+        {/* Heading */}
 
         <div className="text-center">
-          <h2 className="text-5xl font-bold text-blue-900">
-            Explore Our Categories
+
+          <span className="inline-block rounded-full bg-green-100 px-5 py-2 font-semibold text-green-700">
+            Shop by Category
+          </span>
+
+          <h2 className="mt-6 text-5xl font-bold text-blue-900">
+            Explore Aarvya Naturals
           </h2>
 
-          <p className="mt-4 text-gray-600 text-lg">
-            Healthy choices carefully packed for every lifestyle.
+          <p className="mx-auto mt-5 max-w-3xl text-xl text-gray-600">
+            Discover premium quality products carefully selected for a healthier lifestyle.
           </p>
+
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-14">
+        {/* Category Cards */}
+
+        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
 
           {categories.map((category) => (
+
             <Link
               key={category.title}
               href={category.link}
-              className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 p-8 text-center group"
+              className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
-              <div className="text-6xl group-hover:scale-110 transition">
-                {category.emoji}
+
+              {/* Image */}
+
+              <div className="relative flex h-72 items-center justify-center bg-white p-4">
+
+                <Image
+                  src={category.image}
+                  alt={category.title}
+                  fill
+                  sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
+                  className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
+                />
+
               </div>
 
-              <h3 className="mt-6 text-2xl font-bold text-blue-900">
-                {category.title}
-              </h3>
+              {/* Details */}
 
-              <p className="mt-3 text-gray-600 leading-7">
-                {category.description}
-              </p>
+              <div className="flex flex-col p-8">
 
-              <span className="inline-block mt-6 text-green-700 font-semibold group-hover:translate-x-1 transition">
-                View Products →
-              </span>
+                <span className="inline-block w-fit rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-900">
+                  {category.products}
+                </span>
+
+                <h3 className="mt-5 text-2xl font-bold text-blue-900">
+                  {category.title}
+                </h3>
+
+                <p className="mt-4 min-h-[56px] leading-7 text-gray-600">
+                  {category.description}
+                </p>
+
+                <div className="mt-8 flex items-center justify-between">
+
+                  <span className="font-semibold text-green-700">
+                    Explore
+                  </span>
+
+                  <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">
+                    →
+                  </span>
+
+                </div>
+
+              </div>
+
             </Link>
+
           ))}
 
         </div>

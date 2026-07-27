@@ -1,44 +1,130 @@
+import Image from "next/image";
+import Link from "next/link";
+
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 text-white overflow-hidden">
+    <section className="relative min-h-[92vh] overflow-hidden">
 
-      <div className="max-w-7xl mx-auto px-6 py-28">
+      {/* Background */}
 
-        <div className="max-w-3xl">
+      <Image
+        src="/images/hero/hero-banner.png"
+        alt="Aarvya Naturals"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center scale-105"
+      />
 
-          <span className="bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-semibold">
-            🌿 Premium Quality Since Day One
-          </span>
+      {/* Dark Overlay */}
 
-          <h1 className="mt-8 text-5xl md:text-7xl font-extrabold leading-tight">
-            Premium Dry Fruits
-            <br />
-            For A Healthier Life
-          </h1>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/40 to-transparent" />
 
-          <p className="mt-8 text-xl text-blue-100 leading-9">
-            Discover premium almonds, cashews, pistachios, raisins,
-            seeds and healthy snacks carefully packed with freshness
-            and delivered with care.
-          </p>
+      {/* Hero Content */}
 
-          <div className="flex flex-wrap gap-5 mt-10">
+      <div className="relative z-10 flex min-h-[92vh] items-center">
 
-            <a
-              href="/products"
-              className="bg-yellow-400 hover:bg-yellow-300 text-black px-8 py-4 rounded-full font-bold transition"
-            >
-              Browse Products
-            </a>
+        <div className="mx-auto max-w-7xl w-full px-6 lg:px-12">
 
-            <a
-              href="https://wa.me/916374626691"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-2 border-white px-8 py-4 rounded-full hover:bg-white hover:text-blue-900 transition"
-            >
-              Order on WhatsApp
-            </a>
+          <div className="max-w-3xl">
+
+            {/* Badge */}
+
+            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/15 px-5 py-2 text-sm font-semibold text-white backdrop-blur-md">
+
+              🌿 Freshly Packed • Premium Quality • Healthy Living
+
+            </span>
+
+            {/* Heading */}
+
+            <h1 className="mt-8 text-5xl font-black leading-tight text-white md:text-6xl lg:text-7xl">
+
+              Premium Dry Fruits
+
+              <br />
+
+              <span className="text-yellow-400">
+                For A Healthier Lifestyle
+              </span>
+
+            </h1>
+
+            {/* Description */}
+
+            <p className="mt-8 max-w-2xl text-xl leading-9 text-gray-200">
+
+              Premium dry fruits, healthy seeds, nutritious snack collections,
+              wellness combos and non-alcoholic beverages packed hygienically
+              and delivered across India.
+
+            </p>
+
+            {/* Buttons */}
+
+            <div className="mt-10 flex flex-wrap gap-5">
+
+              <Link
+                href="/products"
+                className="rounded-full bg-yellow-500 px-8 py-4 font-semibold text-black shadow-xl transition hover:scale-105 hover:bg-yellow-400"
+              >
+                Shop Products
+              </Link>
+
+              <Link
+                href="/combo-offers"
+                className="rounded-full border-2 border-white px-8 py-4 font-semibold text-white transition hover:bg-white hover:text-black"
+              >
+                Explore Combos
+              </Link>
+
+            </div>
+
+            {/* Trust Boxes */}
+
+            <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4">
+
+              <div className="rounded-2xl bg-white/15 p-4 text-center backdrop-blur-md">
+
+                <div className="text-2xl">🌿</div>
+
+                <p className="mt-2 text-sm font-semibold text-white">
+                  100% Natural
+                </p>
+
+              </div>
+
+              <div className="rounded-2xl bg-white/15 p-4 text-center backdrop-blur-md">
+
+                <div className="text-2xl">🛡</div>
+
+                <p className="mt-2 text-sm font-semibold text-white">
+                  Hygienically Packed
+                </p>
+
+              </div>
+
+              <div className="rounded-2xl bg-white/15 p-4 text-center backdrop-blur-md">
+
+                <div className="text-2xl">🚚</div>
+
+                <p className="mt-2 text-sm font-semibold text-white">
+                  Pan India Delivery
+                </p>
+
+              </div>
+
+              <div className="rounded-2xl bg-white/15 p-4 text-center backdrop-blur-md">
+
+                <div className="text-2xl">🏅</div>
+
+                <p className="mt-2 text-sm font-semibold text-white">
+                  FSSAI Certified
+                </p>
+
+              </div>
+
+            </div>
 
           </div>
 

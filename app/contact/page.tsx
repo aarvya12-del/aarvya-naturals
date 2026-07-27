@@ -2,7 +2,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-white">
 
-      {/* Header */}
+      {/* Hero */}
       <section className="bg-blue-900 text-white py-20">
         <div className="max-w-6xl mx-auto px-6 text-center">
           <h1 className="text-5xl font-bold">Contact Us</h1>
@@ -13,58 +13,73 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Contact Details */}
-      <section className="max-w-5xl mx-auto px-6 py-20">
+      {/* Contact Section */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
 
         <div className="grid md:grid-cols-2 gap-10">
 
-          <div className="bg-gray-100 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-blue-900 mb-6">
+          {/* Contact Details */}
+          <div className="bg-gray-100 rounded-3xl p-10 shadow-sm">
+
+            <h2 className="text-3xl font-bold text-blue-900 mb-8">
               Contact Information
             </h2>
 
-            <div className="space-y-5 text-gray-700">
+            <div className="space-y-6 text-gray-700">
 
-              <p>
-                <strong>Email:</strong><br />
-                aarvya12@gmail.com
-              </p>
+              <div>
+                <h3 className="font-semibold text-lg text-blue-900">
+                  Email
+                </h3>
+                <p>aarvya12@gmail.com</p>
+              </div>
 
-              <p>
-                <strong>Phone / WhatsApp:</strong><br />
-                +91 63746 26691
-              </p>
+              <div>
+                <h3 className="font-semibold text-lg text-blue-900">
+                  Phone / WhatsApp
+                </h3>
+                <p>+91 63746 26691</p>
+              </div>
 
-              <p>
-                <strong>Address:</strong><br />
-                Ammankovil,<br />
-                Saravanampatti,<br />
-                Coimbatore – 641035
-              </p>
+              <div>
+                <h3 className="font-semibold text-lg text-blue-900">
+                  Address
+                </h3>
+                <p>
+                  Ammankovil,
+                  <br />
+                  Saravanampatti,
+                  <br />
+                  Coimbatore - 641035
+                </p>
+              </div>
 
-              <p>
-                <strong>Working Hours:</strong><br />
-                10:00 AM – 9:00 PM
-              </p>
+              <div>
+                <h3 className="font-semibold text-lg text-blue-900">
+                  Working Hours
+                </h3>
+                <p>10:00 AM - 9:00 PM</p>
+              </div>
 
             </div>
+
           </div>
 
-          <div className="bg-blue-900 rounded-2xl p-8 text-white">
+          {/* WhatsApp Card */}
+          <div className="bg-blue-900 text-white rounded-3xl p-10 shadow-lg">
 
-            <h2 className="text-2xl font-bold mb-6">
-              Order on WhatsApp
+            <h2 className="text-3xl font-bold mb-8">
+              Order via WhatsApp
             </h2>
 
-            <p className="leading-8 text-blue-100">
-              Looking for premium dry fruits, healthy seeds,
-              honey products or healthy snacks?
-              Send us a message on WhatsApp and we'll be happy
-              to help you choose the right products.
+            <p className="text-blue-100 leading-8">
+              Looking for premium dry fruits, healthy seeds or carefully
+              curated healthy products? Send us a message and we'll help
+              you choose the perfect products for your needs.
             </p>
 
             <a
-              href="https://wa.me/916374626691"
+              href="https://wa.me/916374626691?text=Hello%20Aarvya%20Naturals,%20I'm%20interested%20in%20your%20products."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block mt-10 bg-green-600 hover:bg-green-700 px-8 py-4 rounded-full font-semibold transition"
