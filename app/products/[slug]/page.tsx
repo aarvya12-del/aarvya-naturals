@@ -28,70 +28,81 @@ export default async function ProductPage({ params }: Props) {
     .slice(0, 3);
 
   return (
-    <main className="bg-gray-50 min-h-screen py-16">
+    <main className="min-h-screen bg-gray-50 py-14">
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="mx-auto max-w-[1500px] px-6">
 
         {/* Breadcrumb */}
 
-        <div className="mb-8 text-sm text-gray-500">
+        <div className="mb-10 flex flex-wrap items-center gap-2 text-sm text-gray-500">
 
-          <Link href="/" className="hover:text-green-700">
+          <Link
+            href="/"
+            className="transition hover:text-green-700"
+          >
             Home
           </Link>
 
-          {" / "}
+          <span>/</span>
 
-          <Link href="/products" className="hover:text-green-700">
+          <Link
+            href="/products"
+            className="transition hover:text-green-700"
+          >
             Products
           </Link>
 
-          {" / "}
+          <span>/</span>
 
           <Link
             href={`/products?category=${encodeURIComponent(product.category)}`}
-            className="hover:text-green-700"
+            className="transition hover:text-green-700"
           >
             {product.category}
           </Link>
 
-          {" / "}
+          <span>/</span>
 
-          <span className="font-medium text-gray-800">
+          <span className="font-semibold text-gray-800">
             {product.name}
           </span>
 
         </div>
 
-        {/* Product */}
+        {/* Product Section */}
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr]">
 
-          {/* Image */}
+          {/* Product Image */}
 
-          <div className="rounded-3xl bg-white p-10 shadow-lg">
+          <div>
 
-            <div className="relative h-[550px]">
+            <div className="rounded-[32px] bg-white p-8 shadow-lg">
 
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                sizes="(max-width:768px)100vw,50vw"
-                className="object-contain"
-              />
+              <div className="relative h-[620px]">
+
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  priority
+                  sizes="(max-width:768px)100vw,50vw"
+                  className="object-contain"
+                />
+
+              </div>
 
             </div>
 
           </div>
 
-          {/* Details */}
+          {/* Product Details */}
 
-          <div>
+          <div className="lg:sticky lg:top-24 h-fit">
 
             {product.badge && (
 
-              <span className="inline-block rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold">
+              <span className="inline-flex rounded-full bg-yellow-400 px-5 py-2 text-sm font-semibold shadow-sm">
 
                 {product.badge}
 
@@ -99,62 +110,63 @@ export default async function ProductPage({ params }: Props) {
 
             )}
 
-            <h1 className="mt-6 text-5xl font-bold text-blue-900">
+            <h1 className="mt-6 text-4xl font-bold text-blue-900 md:text-5xl">
+
               {product.name}
+
             </h1>
 
             <p className="mt-6 text-lg leading-8 text-gray-600">
+
               {product.description}
+
             </p>
 
             <ProductPurchase product={product} />
 
-            {/* Health Benefits */}
+            {/* Trust Badges */}
 
-            <div className="mt-12">
+            <div className="mt-8 grid grid-cols-2 gap-4">
 
-              <h3 className="text-2xl font-bold text-blue-900">
-                Health Benefits
-              </h3>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
 
-              <ul className="mt-6 space-y-3 text-gray-700">
+                <div className="text-3xl">🚚</div>
 
-                <li>✔ Naturally nutritious</li>
-                <li>✔ Rich in vitamins & minerals</li>
-                <li>✔ Suitable for everyday healthy snacking</li>
-                <li>✔ Freshly packed for quality</li>
+                <p className="mt-2 font-semibold text-gray-800">
+                  Fast Delivery
+                </p>
 
-              </ul>
+              </div>
 
-            </div>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
 
-            {/* Storage */}
+                <div className="text-3xl">🥜</div>
 
-            <div className="mt-12">
+                <p className="mt-2 font-semibold text-gray-800">
+                  Freshly Packed
+                </p>
 
-              <h3 className="text-2xl font-bold text-blue-900">
-                Storage Instructions
-              </h3>
+              </div>
 
-              <p className="mt-4 leading-7 text-gray-700">
-                Store in a cool, dry place away from direct sunlight.
-                Keep the pouch tightly sealed after opening to retain
-                freshness.
-              </p>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
 
-            </div>
+                <div className="text-3xl">🛡️</div>
 
-            {/* FSSAI */}
+                <p className="mt-2 font-semibold text-gray-800">
+                  FSSAI Certified
+                </p>
 
-            <div className="mt-10 rounded-2xl border border-green-200 bg-green-50 p-6">
+              </div>
 
-              <h3 className="font-bold text-green-800">
-                Aarvya Naturals
-              </h3>
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
 
-              <p className="mt-2 text-green-700">
-                FSSAI Licence No: <strong>22426552000244</strong>
-              </p>
+                <div className="text-3xl">⭐</div>
+
+                <p className="mt-2 font-semibold text-gray-800">
+                  Premium Quality
+                </p>
+
+              </div>
 
             </div>
 
@@ -162,13 +174,135 @@ export default async function ProductPage({ params }: Props) {
 
         </div>
 
+                {/* Health Benefits */}
+
+        <section className="mt-20">
+
+          <h2 className="text-3xl font-bold text-blue-900">
+            Health Benefits
+          </h2>
+
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+
+            {[
+              {
+                title: "Naturally Nutritious",
+                desc: "Packed with essential nutrients for a healthy lifestyle.",
+              },
+              {
+                title: "Rich in Vitamins & Minerals",
+                desc: "Supports your daily nutritional requirements.",
+              },
+              {
+                title: "Healthy Everyday Snacking",
+                desc: "A delicious alternative to processed snacks.",
+              },
+              {
+                title: "Freshly Packed",
+                desc: "Packed with care to preserve freshness and taste.",
+              },
+            ].map((benefit) => (
+
+              <div
+                key={benefit.title}
+                className="rounded-3xl bg-white p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+              >
+
+                <div className="mb-4 text-3xl">
+                  ✅
+                </div>
+
+                <h3 className="text-xl font-bold text-blue-900">
+                  {benefit.title}
+                </h3>
+
+                <p className="mt-3 leading-7 text-gray-600">
+                  {benefit.desc}
+                </p>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </section>
+
+        {/* Storage */}
+
+        <section className="mt-16 rounded-3xl bg-white p-8 shadow-md">
+
+          <div className="flex items-center gap-3">
+
+            <span className="text-3xl">
+              📦
+            </span>
+
+            <h2 className="text-3xl font-bold text-blue-900">
+              Storage Instructions
+            </h2>
+
+          </div>
+
+          <p className="mt-6 leading-8 text-gray-700">
+
+            Store in a cool, dry place away from direct sunlight.
+            Reseal the pouch immediately after every use to maintain
+            freshness, aroma and crispness.
+
+          </p>
+
+        </section>
+
+        {/* FSSAI */}
+
+        <section className="mt-10 rounded-3xl border border-green-200 bg-green-50 p-8">
+
+          <div className="flex items-center gap-3">
+
+            <span className="text-3xl">
+              🛡️
+            </span>
+
+            <h2 className="text-3xl font-bold text-green-800">
+              Aarvya Naturals
+            </h2>
+
+          </div>
+
+          <p className="mt-5 text-lg text-green-700">
+
+            FSSAI Licence No:
+            <strong> 22426552000244</strong>
+
+          </p>
+
+          <p className="mt-3 text-green-700">
+
+            Hygienically Packed • Premium Quality • Carefully Selected Ingredients
+
+          </p>
+
+        </section>
+
         {/* Related Products */}
 
         <section className="mt-24">
 
-          <h2 className="mb-10 text-4xl font-bold text-blue-900">
-            Related Products
-          </h2>
+          <div className="mb-10 flex items-center justify-between">
+
+            <h2 className="text-4xl font-bold text-blue-900">
+              Related Products
+            </h2>
+
+            <Link
+              href="/products"
+              className="font-semibold text-green-700 hover:underline"
+            >
+              View All →
+            </Link>
+
+          </div>
 
           <div className="grid gap-8 md:grid-cols-3">
 
@@ -176,25 +310,37 @@ export default async function ProductPage({ params }: Props) {
 
               <Link
                 key={item.id}
-                href={`/products/${item.slug}?category=${encodeURIComponent(product.category)}`}
-                className="rounded-3xl bg-white p-6 shadow-lg transition hover:shadow-xl"
+                href={`/products/${item.slug}`}
+                className="group overflow-hidden rounded-3xl bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
 
-                <div className="relative h-56">
+                <div className="relative h-64 overflow-hidden bg-white p-6">
 
                   <Image
                     src={item.image}
                     alt={item.name}
                     fill
                     sizes="33vw"
-                    className="object-contain"
+                    className="object-contain transition duration-500 group-hover:scale-105"
                   />
 
                 </div>
 
-                <h3 className="mt-5 text-xl font-bold text-blue-900">
-                  {item.name}
-                </h3>
+                <div className="p-6">
+
+                  <h3 className="text-xl font-bold text-blue-900">
+
+                    {item.name}
+
+                  </h3>
+
+                  <p className="mt-5 inline-flex items-center rounded-full bg-green-700 px-5 py-2 text-sm font-semibold text-white transition group-hover:bg-green-800">
+
+                    View Details →
+
+                  </p>
+
+                </div>
 
               </Link>
 
@@ -207,5 +353,7 @@ export default async function ProductPage({ params }: Props) {
       </div>
 
     </main>
+
   );
+
 }

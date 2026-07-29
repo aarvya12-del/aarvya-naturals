@@ -124,28 +124,14 @@ export default function ProductPurchase({ product }: Props) {
           quantity={quantity}
         />
 
-        <a
-          href={`https://wa.me/916374626691?text=${encodeURIComponent(
-            `Hi Aarvya Naturals,
-
-I'm interested in:
-
-${product.name}
-
-Weight: ${selectedVariant.weight}
-
-Price: ₹${selectedVariant.price}
-
-Quantity: ${quantity}
-
-Please share the payment details.`
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700"
-        >
-          Buy via WhatsApp
-        </a>
+        <button
+  className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700"
+  onClick={() => {
+    alert("Checkout coming next! 🚀");
+  }}
+>
+  Buy Now
+</button>
 
       </div>
 

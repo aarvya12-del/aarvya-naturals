@@ -12,14 +12,14 @@ export default function ProductCard({
 
       {/* Product Image */}
 
-      <div className="relative h-72 bg-gray-100">
+      <div className="relative h-80 bg-gray-50">
 
         <Image
           src={product.image}
           alt={product.name}
           fill
           sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
-          className="object-contain p-6 transition duration-500 group-hover:scale-105"
+          className="object-contain p-3 transition duration-500 group-hover:scale-105"
         />
 
         {product.badge && (
@@ -38,7 +38,7 @@ export default function ProductCard({
           {product.name}
         </h3>
 
-        <p className="mt-3 min-h-[70px] leading-7 text-gray-600">
+        <p className="mt-3 min-h-[60px] leading-7 text-gray-600">
           {product.shortDescription}
         </p>
 
@@ -51,44 +51,22 @@ export default function ProductCard({
           </p>
 
           <p className="text-sm text-gray-500">
-            Starting from {product.variants[0].weight}
+            Starting at ₹{product.variants[0].price} / {product.variants[0].weight}
           </p>
 
         </div>
 
-        {/* Variants */}
+        {/* Button */}
 
-        <div className="mt-5 flex flex-wrap gap-2">
-
-          {product.variants.map((variant) => (
-
-            <span
-              key={variant.id}
-              className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-900"
-            >
-              {variant.weight}
-            </span>
-
-          ))}
-
-        </div>
-
-        {/* Buttons */}
-
-        <div className="mt-8 grid grid-cols-2 gap-3">
+        <div className="mt-8">
 
           <Link
-            href={`/products/${product.slug}?category=${encodeURIComponent(product.category)}`}
-            className="rounded-full border-2 border-[#0B3C8C] py-3 text-center font-semibold text-[#0B3C8C] transition hover:bg-[#0B3C8C] hover:text-white"
+            href={`/products/${product.slug}?category=${encodeURIComponent(
+              product.category
+            )}`}
+            className="block w-full rounded-full bg-[#0B3C8C] py-3 text-center font-semibold text-white transition hover:bg-[#082f6a]"
           >
-            View Product
-          </Link>
-
-          <Link
-            href={`/products/${product.slug}?category=${encodeURIComponent(product.category)}`}
-            className="rounded-full bg-green-600 py-3 text-center font-semibold text-white transition hover:bg-green-700"
-          >
-            Choose Options
+            View Details
           </Link>
 
         </div>

@@ -6,50 +6,44 @@ const categories = [
     image: "/images/categories/dry-fruits.png",
     title: "Premium Dry Fruits",
     description: "Almonds, Cashews, Pistachios, Walnuts & Raisins",
-    products: "25+ Products",
     link: "/products",
   },
   {
     image: "/images/categories/healthy-seeds.png",
     title: "Healthy Seeds",
     description: "Pumpkin, Sunflower, Flax, Chia & More",
-    products: "10+ Products",
     link: "/products",
   },
   {
     image: "/images/categories/honey-collection.png",
     title: "Honey Collection",
     description: "Honey Amla, Honey Fig & Nuts in Honey",
-    products: "6+ Products",
     link: "/products",
   },
   {
     image: "/images/categories/red-wine.png",
     title: "Non Alcoholic Red Wine",
     description: "Premium Imported Non Alcoholic Red Wine",
-    products: "2 Variants",
     link: "/products",
   },
   {
     image: "/images/categories/combo-offers.png",
     title: "Combo Offers",
     description: "Healthy wellness combos for every lifestyle",
-    products: "14 Combos",
     link: "/combo-offers",
   },
   {
     image: "/images/categories/healthy-snacks.png",
     title: "Healthy Snacks",
     description: "Fruit Chips, Vegetable Chips & More",
-    products: "8+ Products",
     link: "/products",
   },
 ];
 
 export default function Categories() {
   return (
-    <section className="bg-white py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="bg-white py-20">
+      <div className="mx-auto max-w-[1500px] px-6">
 
         {/* Heading */}
 
@@ -63,34 +57,36 @@ export default function Categories() {
             Explore Aarvya Naturals
           </h2>
 
-          <p className="mx-auto mt-5 max-w-3xl text-xl text-gray-600">
-            Discover premium quality products carefully selected for a healthier lifestyle.
+          <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+            From premium dry fruits to wholesome seeds and natural wellness
+            products, discover carefully selected collections for a healthier
+            lifestyle.
           </p>
 
         </div>
 
         {/* Category Cards */}
 
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 
           {categories.map((category) => (
 
             <Link
               key={category.title}
               href={category.link}
-              className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+              className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-green-500 hover:shadow-2xl"
             >
 
               {/* Image */}
 
-              <div className="relative flex h-72 items-center justify-center bg-white p-4">
+              <div className="relative flex h-64 items-center justify-center bg-white p-2">
 
                 <Image
                   src={category.image}
                   alt={category.title}
                   fill
                   sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
-                  className="object-contain p-3 transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-1 transition-transform duration-500 group-hover:scale-105"
                 />
 
               </div>
@@ -99,22 +95,18 @@ export default function Categories() {
 
               <div className="flex flex-col p-8">
 
-                <span className="inline-block w-fit rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-900">
-                  {category.products}
-                </span>
-
-                <h3 className="mt-5 text-2xl font-bold text-blue-900">
+                <h3 className="text-2xl font-bold text-blue-900">
                   {category.title}
                 </h3>
 
-                <p className="mt-4 min-h-[56px] leading-7 text-gray-600">
+                <p className="mt-4 leading-7 text-gray-600">
                   {category.description}
                 </p>
 
                 <div className="mt-8 flex items-center justify-between">
 
-                  <span className="font-semibold text-green-700">
-                    Explore
+                  <span className="font-semibold text-green-700 transition-colors duration-300 group-hover:text-green-800">
+                    Explore Collection
                   </span>
 
                   <span className="text-2xl transition-transform duration-300 group-hover:translate-x-2">

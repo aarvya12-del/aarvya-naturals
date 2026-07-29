@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
@@ -53,15 +54,10 @@ export default function RootLayout({
   return (
     <html lang="en" data-scroll-behavior="smooth">
       <body className="bg-white text-gray-900">
-
         <AuthProvider>
-
           <CartProvider>
-
             <CheckoutProvider>
-
               <OrderProvider>
-
                 <Navbar />
 
                 {children}
@@ -69,15 +65,15 @@ export default function RootLayout({
                 <Footer />
 
                 <FloatingWhatsApp />
-
               </OrderProvider>
-
             </CheckoutProvider>
-
           </CartProvider>
-
         </AuthProvider>
 
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

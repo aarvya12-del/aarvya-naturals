@@ -1,7 +1,6 @@
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import FeaturedProducts from "@/components/FeaturedProducts";
-import FeaturedComboOffers from "@/components/FeaturedComboOffers";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import CustomerReviews from "@/components/CustomerReviews";
 
@@ -23,10 +22,7 @@ export default function Home() {
       {/* Best Selling Products */}
       <FeaturedProducts />
 
-      {/* Combo Offers */}
-      <FeaturedComboOffers />
-
-      {/* Why Choose Aarvya */}
+      {/* Why Choose Aarvya Naturals */}
       <WhyChooseUs />
 
       {/* Customer Reviews */}
