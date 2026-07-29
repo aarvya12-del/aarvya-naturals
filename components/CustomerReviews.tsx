@@ -68,7 +68,7 @@ return(
 </h2>
 
 <p className="mt-2 text-gray-600">
-Based on 6 Verified Google Reviews
+Based on 5 Verified Google Reviews
 </p>
 
 </div>
@@ -119,7 +119,7 @@ className="rounded-full border border-green-200 px-4 py-2 hover:bg-green-50 tran
 </div>
 
 <div className="mt-8 flex flex-col md:flex-row justify-center gap-4">
-<a href="https://www.google.com/maps/place/Aarvya+Naturals" target="_blank"
+<a href="https://www.google.com/maps/place/Aarvya+Naturals/@11.0706702,76.9988664,4266m/data=!3m1!1e3!4m8!3m7!1s0x3ba8f76c5f7439a3:0x4b3d34e6a019e95!8m2!3d11.0663475!4d77.0017267!9m1!1b1!16s%2Fg%2F11zcnwhgzn?entry=ttu&g_ep=EgoyMDI2MDcyNi4wIKXMDSoASAFQAw%3D%3D" target="_blank"
 className="rounded-full bg-[#0B3C8C] px-8 py-3 text-white font-semibold hover:scale-105 transition">
 ⭐ View Google Reviews
 </a>
