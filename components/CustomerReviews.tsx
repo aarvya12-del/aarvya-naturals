@@ -124,7 +124,7 @@ className="rounded-full bg-[#0B3C8C] px-8 py-3 text-white font-semibold hover:sc
 ⭐ View Google Reviews
 </a>
 
-<a href="https://www.google.com/maps/place/Aarvya+Naturals" target="_blank"
+<a href="https://g.page/r/CZWeAWpO07MEEBM/review" target="_blank"
 className="rounded-full bg-green-600 px-8 py-3 text-white font-semibold hover:scale-105 transition">
 ✍ Write a Review
 </a>
