@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 
 import { useCheckout } from "@/context/CheckoutContext";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { saveOrder } from "@/lib/saveOrder";
 
 declare global {
   interface Window {
@@ -16,11 +18,14 @@ declare global {
 export default function PaymentPage() {
   const router = useRouter();
 
+  const { user } = useAuth();
+
   const { cart, clearCart } = useCart();
 
   const {
     address,
     shippingCharge,
+    resetCheckout,
   } = useCheckout();
 
   const [loading, setLoading] = useState(false);
@@ -37,27 +42,21 @@ export default function PaymentPage() {
       alert(
         "Unable to load Razorpay. Please refresh the page."
       );
-
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "/api/create-order",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            amount: grandTotal,
-          }),
-        }
-      );
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: grandTotal,
+        }),
+      });
 
       const order = await response.json();
 
@@ -88,9 +87,7 @@ export default function PaymentPage() {
 
         prefill: {
           name: address.fullName,
-
           email: address.email,
-
           contact: address.mobile,
         },
 
@@ -149,27 +146,70 @@ export default function PaymentPage() {
               return;
             }
 
-            /*
-             Firestore order save
-             will be added next.
-            */
+            if (!user) {
+              throw new Error(
+                "User not logged in."
+              );
+            }
+
+            const orderId =
+              await saveOrder({
+                userId: user.uid,
+
+                customer: {
+                  name: address.fullName,
+                  email: address.email,
+                  mobile: address.mobile,
+                },
+
+                address: {
+                  house: address.house,
+                  street: address.street,
+                  area: address.area,
+                  city: address.city,
+                  state: address.state,
+                  pincode:
+                    address.pincode,
+                },
+
+                products: cart,
+
+                subtotal,
+
+                shipping:
+                  shippingCharge,
+
+                grandTotal,
+
+                razorpayOrderId:
+                  razorpayResponse.razorpay_order_id,
+
+                razorpayPaymentId:
+                  razorpayResponse.razorpay_payment_id,
+              });
 
             clearCart();
 
-            router.push("/order-success");
-                      } catch (error) {
+            resetCheckout();
+
+            router.push(
+              `/order-success?orderId=${orderId}`
+            );
+          } catch (error) {
             console.error(error);
 
             setLoading(false);
 
             alert(
-              "Unable to verify payment. Please contact support if the amount was deducted."
+              "Unable to save your order. Please contact support if the payment was deducted."
             );
           }
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay = new window.Razorpay(
+        options
+      );
 
       razorpay.on(
         "payment.failed",
@@ -204,7 +244,6 @@ export default function PaymentPage() {
 
       <main className="min-h-screen bg-[#FDFBF7] py-16">
         <div className="mx-auto max-w-3xl rounded-3xl bg-white p-10 shadow-xl">
-
           <h1 className="text-center text-4xl font-bold text-[#0B3C8C]">
             Payment
           </h1>
@@ -214,7 +253,6 @@ export default function PaymentPage() {
           </p>
 
           <div className="mt-10 space-y-5 rounded-2xl bg-gray-50 p-6">
-
             <div className="flex justify-between">
               <span>Customer</span>
 
@@ -226,13 +264,15 @@ export default function PaymentPage() {
             <div className="flex justify-between">
               <span>Subtotal</span>
 
-              <span>₹{subtotal}</span>
+              <span>₹{subtotal}
+              </span>
             </div>
 
             <div className="flex justify-between">
               <span>Shipping</span>
 
-              <span>₹{shippingCharge}</span>
+              <span>₹{shippingCharge}
+              </span>
             </div>
 
             <hr />
@@ -240,9 +280,9 @@ export default function PaymentPage() {
             <div className="flex justify-between text-2xl font-bold text-[#0B3C8C]">
               <span>Grand Total</span>
 
-              <span>₹{grandTotal}</span>
+              <span>₹{grandTotal}
+              </span>
             </div>
-
           </div>
 
           <button
@@ -258,7 +298,6 @@ export default function PaymentPage() {
           <p className="mt-4 text-center text-sm text-gray-500">
             🔒 Secure payment powered by Razorpay
           </p>
-
         </div>
       </main>
     </>
