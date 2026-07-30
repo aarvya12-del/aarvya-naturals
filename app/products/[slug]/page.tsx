@@ -77,22 +77,22 @@ export default async function ProductPage({ params }: Props) {
 
           <div>
 
-            <div className="rounded-[32px] bg-white p-8 shadow-lg">
+            <div className="overflow-hidden rounded-[32px] bg-white shadow-xl">
 
-              <div className="relative h-[620px]">
+  <div className="relative h-[700px] overflow-hidden bg-gray-50">
 
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  priority
-                  sizes="(max-width:768px)100vw,50vw"
-                  className="object-contain"
-                />
+    <Image
+      src={product.image}
+      alt={product.name}
+      fill
+      priority
+      sizes="(max-width:768px)100vw,50vw"
+      className="object-cover transition-transform duration-700 hover:scale-105"
+    />
 
-              </div>
+  </div>
 
-            </div>
+</div>
 
           </div>
 
@@ -128,7 +128,7 @@ export default async function ProductPage({ params }: Props) {
 
             <div className="mt-8 grid grid-cols-2 gap-4">
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
                 <div className="text-3xl">🚚</div>
 
@@ -138,7 +138,7 @@ export default async function ProductPage({ params }: Props) {
 
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
                 <div className="text-3xl">🥜</div>
 
@@ -148,7 +148,7 @@ export default async function ProductPage({ params }: Props) {
 
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
                 <div className="text-3xl">🛡️</div>
 
@@ -158,7 +158,7 @@ export default async function ProductPage({ params }: Props) {
 
               </div>
 
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-5 text-center shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 
                 <div className="text-3xl">⭐</div>
 
@@ -205,7 +205,7 @@ export default async function ProductPage({ params }: Props) {
 
               <div
                 key={benefit.title}
-                className="rounded-3xl bg-white p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl"
+                className="rounded-3xl border border-gray-100 bg-white p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-green-400 hover:shadow-xl"
               >
 
                 <div className="mb-4 text-3xl">
@@ -314,14 +314,14 @@ export default async function ProductPage({ params }: Props) {
                 className="group overflow-hidden rounded-3xl bg-white shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
               >
 
-                <div className="relative h-64 overflow-hidden bg-white p-6">
+                <div className="relative h-80 overflow-hidden rounded-t-3xl bg-gray-50">
 
                   <Image
                     src={item.image}
                     alt={item.name}
                     fill
                     sizes="33vw"
-                    className="object-contain transition duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
 
                 </div>

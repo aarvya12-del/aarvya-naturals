@@ -21,11 +21,12 @@ const categories = [
     link: "/products",
   },
   {
-    image: "/images/categories/red-wine.png",
-    title: "Non Alcoholic Red Wine",
-    description: "Premium Imported Non Alcoholic Red Wine",
-    link: "/products",
-  },
+  image: "/images/categories/red-wine.png",
+  title: "Non Alcoholic Red Wine",
+  description: "Premium Imported Non Alcoholic Red Wine",
+  link: "/products",
+  imageClass: "object-contain object-center scale-90",
+},
   {
     image: "/images/categories/combo-offers.png",
     title: "Combo Offers",
@@ -79,14 +80,17 @@ export default function Categories() {
 
               {/* Image */}
 
-              <div className="relative flex h-64 items-center justify-center bg-white p-2">
+              <div className="relative h-80 overflow-hidden bg-gray-50">
 
                 <Image
                   src={category.image}
                   alt={category.title}
                   fill
                   sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
-                  className="object-contain p-1 transition-transform duration-500 group-hover:scale-105"
+                  className={`${
+  category.imageClass ?? "object-cover group-hover:scale-110"
+} transition-transform duration-700`}
+                  priority
                 />
 
               </div>

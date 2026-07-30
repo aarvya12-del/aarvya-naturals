@@ -43,18 +43,18 @@ export default function FeaturedProducts() {
 
               {/* Image */}
 
-              <div className="relative flex h-80 items-center justify-center bg-gray-50">
+              <div className="relative h-96 overflow-hidden rounded-t-3xl bg-gray-50">
 
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
                   sizes="(max-width:768px)100vw,(max-width:1024px)50vw,25vw"
-                  className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
 
                 {product.badge && (
-                  <span className="absolute left-4 top-4 rounded-full bg-[#C9A227] px-3 py-1 text-sm font-semibold text-white">
+                  <span className="absolute left-4 top-4 rounded-full bg-[#C9A227] px-4 py-1 text-sm font-bold text-white shadow-md">
                     {product.badge}
                   </span>
                 )}
@@ -63,13 +63,13 @@ export default function FeaturedProducts() {
 
               {/* Details */}
 
-              <div className="flex flex-1 flex-col p-6">
+              <div className="flex flex-1 flex-col p-7">
 
                 <h3 className="text-2xl font-bold text-blue-900">
                   {product.name}
                 </h3>
 
-                <p className="mt-3 flex-1 text-gray-600 leading-7">
+                <p className="mt-3 flex-1 leading-7 text-gray-600">
                   {product.shortDescription}
                 </p>
 

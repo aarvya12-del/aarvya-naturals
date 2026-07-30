@@ -12,14 +12,14 @@ export default function ProductCard({
 
       {/* Product Image */}
 
-      <div className="relative h-80 bg-gray-50">
+      <div className="relative h-96 overflow-hidden rounded-t-3xl bg-gray-50">
 
         <Image
           src={product.image}
           alt={product.name}
           fill
           sizes="(max-width:768px)100vw,(max-width:1200px)50vw,33vw"
-          className="object-contain p-3 transition duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
         {product.badge && (
@@ -51,7 +51,8 @@ export default function ProductCard({
           </p>
 
           <p className="text-sm text-gray-500">
-            Starting at ₹{product.variants[0].price} / {product.variants[0].weight}
+            Starting at ₹{product.variants[0].price} /{" "}
+            {product.variants[0].weight}
           </p>
 
         </div>
@@ -64,7 +65,7 @@ export default function ProductCard({
             href={`/products/${product.slug}?category=${encodeURIComponent(
               product.category
             )}`}
-            className="block w-full rounded-full bg-[#0B3C8C] py-3 text-center font-semibold text-white transition hover:bg-[#082f6a]"
+            className="block w-full rounded-full bg-[#0B3C8C] py-3 text-center font-semibold text-white transition duration-300 hover:bg-[#082f6a]"
           >
             View Details
           </Link>
