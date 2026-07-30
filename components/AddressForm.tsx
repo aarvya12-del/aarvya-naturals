@@ -2,11 +2,13 @@
 
 import {
   useEffect,
+  useState,
   type Dispatch,
   type SetStateAction,
 } from "react";
 
 import { calculateShipping } from "@/lib/shipping";
+import { lookupPincode } from "@/lib/pincode";
 
 type Address = {
   fullName: string;
@@ -33,11 +35,64 @@ export default function AddressForm({
   setAddress,
   setShippingCharge,
 }: Props) {
+  const [loadingPincode, setLoadingPincode] = useState(false);
+  const [pincodeError, setPincodeError] = useState("");
+  const [localities, setLocalities] = useState<string[]>([]);
 
-  function handleChange(
+  async function handleChange(
     e: React.ChangeEvent<HTMLInputElement>
   ) {
     const { name, value } = e.target;
+
+    if (name === "pincode") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 6);
+
+      setAddress((prev) => ({
+        ...prev,
+        pincode: digitsOnly,
+      }));
+
+      setPincodeError("");
+
+      if (digitsOnly.length < 6) {
+        setAddress((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+
+        return;
+      }
+
+      setLoadingPincode(true);
+
+      const result = await lookupPincode(digitsOnly);
+
+      setLoadingPincode(false);
+
+      if (!result.success) {
+        setPincodeError(result.message ?? "Invalid pincode");
+
+        setAddress((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+
+        return;
+      }
+
+      setLocalities(result.localities ?? []);
+
+setAddress((prev) => ({
+  ...prev,
+  area: "",
+  city: result.city ?? "",
+  state: result.state ?? "",
+}));
+
+      return;
+    }
 
     setAddress((prev) => ({
       ...prev,
@@ -45,9 +100,7 @@ export default function AddressForm({
     }));
   }
 
-  // ✅ Calculate shipping whenever address changes
   useEffect(() => {
-
     if (
       address.city.trim() === "" ||
       address.state.trim() === ""
@@ -62,7 +115,6 @@ export default function AddressForm({
     );
 
     setShippingCharge(shipping.charge);
-
   }, [
     address.city,
     address.state,
@@ -71,7 +123,6 @@ export default function AddressForm({
 
   return (
     <div className="rounded-3xl bg-white p-8 shadow-lg">
-
       <h2 className="text-3xl font-bold text-blue-900">
         Delivery Address
       </h2>
@@ -127,48 +178,72 @@ export default function AddressForm({
           className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
         />
 
-        <input
-          type="text"
-          name="area"
-          placeholder="Area / Locality"
-          value={address.area}
-          onChange={handleChange}
-          className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
-        />
+        <select
+  name="area"
+  value={address.area}
+  onChange={(e) =>
+    setAddress((prev) => ({
+      ...prev,
+      area: e.target.value,
+    }))
+  }
+  disabled={localities.length === 0}
+  className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900 bg-white disabled:bg-gray-100"
+>
+  <option value="">Select your locality</option>
+
+  {localities.map((locality) => (
+    <option key={locality} value={locality}>
+      {locality}
+    </option>
+  ))}
+</select>
 
         <div className="grid gap-6 md:grid-cols-3">
 
-          <input
-            type="text"
-            name="pincode"
-            placeholder="Pincode"
-            value={address.pincode}
-            onChange={handleChange}
-            className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
-          />
+  <input
+    type="text"
+    inputMode="numeric"
+    maxLength={6}
+    name="pincode"
+    placeholder="Pincode"
+    value={address.pincode}
+    onChange={handleChange}
+    className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
+  />
 
-          <input
-            type="text"
-            name="city"
-            placeholder="City"
-            value={address.city}
-            onChange={handleChange}
-            className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
-          />
+  <input
+    type="text"
+    name="city"
+    placeholder="City"
+    value={address.city}
+    readOnly
+    className="rounded-2xl border border-gray-300 bg-gray-100 px-5 py-4 outline-none"
+  />
 
-          <input
-            type="text"
-            name="state"
-            placeholder="State"
-            value={address.state}
-            onChange={handleChange}
-            className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
-          />
+  <input
+    type="text"
+    name="state"
+    placeholder="State"
+    value={address.state}
+    readOnly
+    className="rounded-2xl border border-gray-300 bg-gray-100 px-5 py-4 outline-none"
+  />
 
-        </div>
+</div>
 
+        {loadingPincode && (
+          <p className="text-sm text-blue-700">
+            Detecting location...
+          </p>
+        )}
+
+        {pincodeError && (
+          <p className="text-sm text-red-600">
+            {pincodeError}
+          </p>
+        )}
       </div>
-
     </div>
   );
 }
