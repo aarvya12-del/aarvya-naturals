@@ -63,31 +63,33 @@ Thank you!`
           ← Back to Combo Offers
         </Link>
 
-        <div className="grid gap-14 lg:grid-cols-2">
+        <div className="grid gap-14 lg:grid-cols-2 lg:items-start">
 
           {/* Image */}
 
-          <div className="overflow-hidden rounded-3xl bg-white shadow-xl">
+         <div className="relative overflow-hidden rounded-3xl shadow-xl">
 
-            <div className="relative h-[520px]">
+  <div className="overflow-hidden rounded-3xl">
 
-              <Image
-                src={combo.image}
-                alt={combo.name}
-                fill
-                className="object-contain p-10"
-                priority
-              />
+  <Image
+    src={combo.image}
+    alt={combo.name}
+    width={1536}
+    height={1024}
+    className="block w-full rounded-3xl object-cover"
+    style={{
+      clipPath: "inset(0 0 0px 0)"
+    }}
+    priority
+  />
 
-              <span className="absolute left-6 top-6 rounded-full bg-[#C9A227] px-5 py-2 text-sm font-semibold text-black shadow">
+</div>
 
-                {combo.badge}
+  <span className="absolute left-6 top-6 rounded-full bg-[#C9A227] px-5 py-2 text-sm font-semibold text-black shadow">
+    {combo.badge}
+  </span>
 
-              </span>
-
-            </div>
-
-          </div>
+</div>
 
           {/* Details */}
 

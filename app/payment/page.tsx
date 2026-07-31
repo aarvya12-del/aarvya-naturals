@@ -140,8 +140,8 @@ export default function PaymentPage() {
               setLoading(false);
 
               alert(
-                "Payment verification failed."
-              );
+  "Payment verification failed. If money was deducted, please contact Aarvya Naturals with your payment reference."
+);
 
               return;
             }
