@@ -30,8 +30,17 @@ export async function GET(req: NextRequest) {
       `https://api.postalpincode.in/pincode/${pincode}`,
       {
         cache: "no-store",
+        headers: {
+          Accept: "application/json",
+        },
       }
     );
+
+    if (!response.ok) {
+      throw new Error(
+        `India Post API returned ${response.status}`
+      );
+    }
 
     const data = await response.json();
 
@@ -39,7 +48,8 @@ export async function GET(req: NextRequest) {
       !Array.isArray(data) ||
       data.length === 0 ||
       data[0].Status !== "Success" ||
-      !data[0].PostOffice?.length
+      !Array.isArray(data[0].PostOffice) ||
+      data[0].PostOffice.length === 0
     ) {
       return NextResponse.json({
         success: false,
@@ -49,31 +59,36 @@ export async function GET(req: NextRequest) {
 
     const postOffices = data[0].PostOffice;
 
-const localities = [
-  ...new Set(
-    postOffices
-      .map((office: { Name: string }) => office.Name)
-      .filter(Boolean)
-  ),
-].sort();
+    const localities = [
+      ...new Set(
+        postOffices
+          .map((office: any) => office.Name)
+          .filter(Boolean)
+      ),
+    ].sort();
 
-return NextResponse.json({
-  success: true,
-  city: postOffices[0].District,
-  state: postOffices[0].State,
-  district: postOffices[0].District,
-  localities,
-  pincode,
-});
+    return NextResponse.json({
+      success: true,
+      city: postOffices[0].District,
+      state: postOffices[0].State,
+      district: postOffices[0].District,
+      localities,
+      pincode,
+    });
   } catch (error) {
     console.error("Pincode API Error:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Unable to fetch pincode details.",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to fetch pincode details.",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
