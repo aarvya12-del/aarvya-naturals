@@ -3,25 +3,31 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { comboProducts } from "@/data/comboProducts";
+import type { ComboProduct } from "@/data/comboProducts";
+import { getComboBySlug } from "@/lib/firestoreProducts";
 import AddToCartButton from "@/components/AddToCartButton";
+import WishlistHeartButton from "@/components/WishlistHeartButton";
 
 export default function ComboDetailsPage() {
   const params = useParams();
-
   const slug = params.slug as string;
 
-  const combo = useMemo(
-    () =>
-      comboProducts.find(
-        (item) => item.slug === slug
-      ),
-    [slug]
-  );
-
+  const [combo, setCombo] = useState<ComboProduct | null | undefined>(undefined);
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    getComboBySlug(slug).then(setCombo);
+  }, [slug]);
+
+  if (combo === undefined) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#FDFBF7]">
+        <p className="text-lg text-gray-500">Loading…</p>
+      </main>
+    );
+  }
 
   if (!combo) {
     notFound();
@@ -88,6 +94,12 @@ Thank you!`
   <span className="absolute left-6 top-6 rounded-full bg-[#C9A227] px-5 py-2 text-sm font-semibold text-black shadow">
     {combo.badge}
   </span>
+
+  <WishlistHeartButton
+    slug={combo.slug}
+    type="combo"
+    className="absolute right-6 top-6"
+  />
 
 </div>
 
@@ -212,7 +224,7 @@ Thank you!`
         <section className="mt-20">
 
           <h2 className="text-4xl font-bold text-[#0B3C8C]">
-            What's Included
+            What&apos;s Included
           </h2>
 
           <p className="mt-4 text-lg text-gray-600">

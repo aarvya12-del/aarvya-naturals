@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import SocialLinks from "@/components/navbar/SocialLinks";
 
 import {
   ShoppingCart,
@@ -14,6 +15,7 @@ import {
   Package,
   MapPin,
   MessageCircle,
+  MessageSquarePlus,
   UserCircle,
 } from "@/components/Icons";
 
@@ -68,6 +70,8 @@ export default function UserMenu() {
 
   return (
     <div className="flex items-center gap-4">
+
+      {/* Account */}
 
       {!loading &&
         (user ? (
@@ -160,6 +164,8 @@ export default function UserMenu() {
           </Link>
         ))}
 
+      {/* Cart */}
+
       <Link
         href="/cart"
         className="relative flex h-12 w-12 items-center justify-center rounded-full border border-[#0B3C8C] transition hover:bg-blue-50"
@@ -176,6 +182,8 @@ export default function UserMenu() {
         )}
       </Link>
 
+      {/* WhatsApp */}
+
       <a
         href="https://wa.me/916374626691?text=Hello%20Aarvya%20Naturals,%20I'm%20interested%20in%20your%20products."
         target="_blank"
@@ -185,6 +193,24 @@ export default function UserMenu() {
         <MessageCircle size={20} />
         WhatsApp
       </a>
+
+      {/* Suggestions — after WhatsApp, out of the primary action cluster */}
+
+      <Link
+        href="/suggestions"
+        aria-label="Suggestions & Feedback"
+        title="Suggestions & Feedback"
+        className="flex h-12 w-12 items-center justify-center rounded-full border border-[#0B3C8C] transition hover:bg-blue-50"
+      >
+        <MessageSquarePlus
+          size={22}
+          className="text-[#0B3C8C]"
+        />
+      </Link>
+
+      {/* Social icons — last, least frequently used */}
+
+      <SocialLinks />
 
     </div>
   );

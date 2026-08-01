@@ -2,7 +2,8 @@
 
 import { Suspense, useMemo, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { products } from "@/data/products";
+import type { Product } from "@/types/product";
+import { getAllProductsFromFirestore } from "@/lib/firestoreProducts";
 import ProductCard from "@/components/ProductCard";
 
 function ProductsContent() {
@@ -11,8 +12,16 @@ function ProductsContent() {
 
   const categoryFromUrl = searchParams.get("category") || "All";
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    getAllProductsFromFirestore()
+      .then(setProducts)
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     setSelectedCategory(categoryFromUrl);
@@ -50,7 +59,7 @@ function ProductsContent() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [selectedCategory, search]);
+  }, [selectedCategory, search, products]);
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -112,17 +121,22 @@ function ProductsContent() {
 
       <section className="mx-auto mt-8 max-w-7xl px-6">
         <p className="text-lg font-semibold text-gray-600">
-          Showing {filteredProducts.length} Product
-          {filteredProducts.length !== 1 ? "s" : ""}
+          {loading
+            ? "Loading products…"
+            : `Showing ${filteredProducts.length} Product${filteredProducts.length !== 1 ? "s" : ""}`}
         </p>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-10">
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="rounded-3xl bg-white py-24 text-center shadow-lg">
+            <p className="text-lg text-gray-500">Loading products…</p>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((product) => (
               <ProductCard
-                key={product.id}
+                key={product.slug}
                 product={product}
               />
             ))}

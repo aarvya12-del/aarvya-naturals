@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 
 import { db } from "@/lib/firebase";
@@ -16,11 +19,16 @@ import { useAuth } from "@/context/AuthContext";
 import AddressForm, { Address } from "./AddressForm";
 import AddressCard from "./AddressCard";
 
+type StoredAddress = Address & { id: string };
+
 export default function AddressList() {
   const { user } = useAuth();
 
-  const [addresses, setAddresses] = useState<(Address & {id:string})[]>([]);
+  const [addresses, setAddresses] = useState<StoredAddress[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<StoredAddress | null>(
+    null
+  );
 
   async function loadAddresses() {
     if (!user) return;
@@ -47,16 +55,44 @@ export default function AddressList() {
   async function handleSave(address: Address) {
     if (!user) return;
 
-    await addDoc(
-      collection(db, "users", user.uid, "addresses"),
-      {
-        ...address,
-        createdAt: serverTimestamp(),
-      }
-    );
+    if (editingAddress) {
+      // Editing an existing address — update it, don't create a new one.
+      await updateDoc(
+        doc(db, "users", user.uid, "addresses", editingAddress.id),
+        { ...address }
+      );
+    } else {
+      await addDoc(
+        collection(db, "users", user.uid, "addresses"),
+        {
+          ...address,
+          createdAt: serverTimestamp(),
+        }
+      );
+    }
 
     setShowForm(false);
+    setEditingAddress(null);
     await loadAddresses();
+  }
+
+  function handleEdit(address: StoredAddress) {
+    setEditingAddress(address);
+    setShowForm(true);
+  }
+
+  async function handleDelete(address: StoredAddress) {
+    if (!user) return;
+
+    if (!confirm("Delete this address?")) return;
+
+    await deleteDoc(doc(db, "users", user.uid, "addresses", address.id));
+    await loadAddresses();
+  }
+
+  function handleCancel() {
+    setShowForm(false);
+    setEditingAddress(null);
   }
 
   return (
@@ -67,7 +103,10 @@ export default function AddressList() {
         </h2>
 
         <button
-          onClick={() => setShowForm(true)}
+          onClick={() => {
+            setEditingAddress(null);
+            setShowForm(true);
+          }}
           className="rounded-xl bg-[#0B3C8C] px-6 py-3 font-semibold text-white"
         >
           + Add Address
@@ -76,8 +115,9 @@ export default function AddressList() {
 
       {showForm && (
         <AddressForm
+          initialData={editingAddress ?? undefined}
           onSave={handleSave}
-          onCancel={() => setShowForm(false)}
+          onCancel={handleCancel}
         />
       )}
 
@@ -91,6 +131,8 @@ export default function AddressList() {
             <AddressCard
               key={address.id}
               address={address}
+              onEdit={() => handleEdit(address)}
+              onDelete={() => handleDelete(address)}
             />
           ))}
         </div>

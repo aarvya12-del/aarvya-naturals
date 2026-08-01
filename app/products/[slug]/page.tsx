@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { getProductBySlug, getAllProductsFromFirestore } from "@/lib/firestoreProducts";
 import ProductPurchase from "@/components/ProductPurchase";
+import WishlistHeartButton from "@/components/WishlistHeartButton";
 
 type Props = {
   params: Promise<{
@@ -13,13 +14,15 @@ type Props = {
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
 
-  const product = products.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = products
+  const allProducts = await getAllProductsFromFirestore();
+
+  const relatedProducts = allProducts
     .filter(
       (p) =>
         p.category === product.category &&
@@ -88,6 +91,12 @@ export default async function ProductPage({ params }: Props) {
       priority
       sizes="(max-width:768px)100vw,50vw"
       className="object-cover transition-transform duration-700 hover:scale-105"
+    />
+
+    <WishlistHeartButton
+      slug={product.slug}
+      type="product"
+      className="absolute right-6 top-6"
     />
 
   </div>

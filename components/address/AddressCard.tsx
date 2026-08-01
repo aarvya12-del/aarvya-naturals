@@ -7,9 +7,11 @@ import { Address } from "./AddressForm";
 
 interface Props {
   address: Address & { id: string };
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export default function AddressCard({ address }: Props) {
+export default function AddressCard({ address, onEdit, onDelete }: Props) {
   const router = useRouter();
 
   const {
@@ -107,11 +109,17 @@ export default function AddressCard({ address }: Props) {
             Use for Checkout
           </button>
 
-          <button className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50">
+          <button
+            onClick={onEdit}
+            className="rounded-lg border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+          >
             Edit
           </button>
 
-          <button className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50">
+          <button
+            onClick={onDelete}
+            className="rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
             Delete
           </button>
 

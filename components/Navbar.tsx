@@ -14,21 +14,21 @@ export default function Navbar() {
 
       <header className="sticky top-0 z-50 bg-white shadow-md">
 
-        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-6 lg:px-8">
+        <div className="mx-auto flex h-24 max-w-7xl items-center justify-between pl-3 pr-6 lg:pl-4 lg:pr-8">
 
           {/* Logo */}
 
           <Link
             href="/"
-            className="flex items-center transition duration-300 hover:scale-105"
+            className="mr-6 flex shrink-0 items-center transition duration-300 hover:scale-105"
           >
             <Image
               src="/images/logo/logo-horizontal.png"
               alt="Aarvya Naturals"
-              width={300}
-              height={80}
+              width={340}
+              height={90}
               priority
-              className="h-16 w-auto object-contain"
+              className="h-20 w-auto object-contain"
             />
           </Link>
 
@@ -36,7 +36,7 @@ export default function Navbar() {
 
           <NavLinks />
 
-          {/* User Menu */}
+          {/* User Menu (includes cart, WhatsApp, suggestions, social icons) */}
 
           <UserMenu />
 

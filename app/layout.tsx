@@ -4,12 +4,12 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { CheckoutProvider } from "@/context/CheckoutContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.aarvyanaturals.in"),
@@ -56,17 +56,17 @@ export default function RootLayout({
       <body className="bg-white text-gray-900">
         <AuthProvider>
           <CartProvider>
-            <CheckoutProvider>
-              <OrderProvider>
-                <Navbar />
+            <WishlistProvider>
+              <CheckoutProvider>
+                <OrderProvider>
+                  <Navbar />
 
-                {children}
+                  {children}
 
-                <Footer />
-
-                <FloatingWhatsApp />
-              </OrderProvider>
-            </CheckoutProvider>
+                  <Footer />
+                </OrderProvider>
+              </CheckoutProvider>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
 

@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { comboProducts } from "@/data/comboProducts";
+import { getAllCombosFromFirestore } from "@/lib/firestoreProducts";
+import WishlistHeartButton from "@/components/WishlistHeartButton";
 
-export default function FeaturedComboOffers() {
+export default async function FeaturedComboOffers() {
+  const comboProducts = await getAllCombosFromFirestore();
   const featured = comboProducts.slice(0, 4);
 
   return (
@@ -32,12 +34,12 @@ export default function FeaturedComboOffers() {
           {featured.map((combo) => (
 
             <div
-              key={combo.id}
+              key={combo.slug}
               className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl"
             >
 
               {/* Full Poster */}
-              <div className="bg-white p-4">
+              <div className="relative bg-white p-4">
 
                 <Image
                   src={combo.image}
@@ -45,6 +47,12 @@ export default function FeaturedComboOffers() {
                   width={1080}
                   height={1350}
                   className="w-full h-auto rounded-2xl"
+                />
+
+                <WishlistHeartButton
+                  slug={combo.slug}
+                  type="combo"
+                  className="absolute right-8 top-8"
                 />
 
               </div>

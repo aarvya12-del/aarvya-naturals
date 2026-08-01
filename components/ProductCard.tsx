@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/types/product";
+import WishlistHeartButton from "@/components/WishlistHeartButton";
 
 export default function ProductCard({
   product,
@@ -27,6 +28,8 @@ export default function ProductCard({
             {product.badge}
           </span>
         )}
+
+        <WishlistHeartButton slug={product.slug} type="product" />
 
       </div>
 

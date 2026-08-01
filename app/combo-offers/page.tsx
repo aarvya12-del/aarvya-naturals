@@ -1,10 +1,22 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { comboProducts } from "@/data/comboProducts";
+import type { ComboProduct } from "@/data/comboProducts";
+import { getAllCombosFromFirestore } from "@/lib/firestoreProducts";
+import WishlistHeartButton from "@/components/WishlistHeartButton";
 
 export default function ComboOffersPage() {
+  const [comboProducts, setComboProducts] = useState<ComboProduct[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAllCombosFromFirestore()
+      .then(setComboProducts)
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <main className="min-h-screen bg-gray-50">
 
@@ -42,7 +54,7 @@ export default function ComboOffersPage() {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-gray-600">
-            Whether you're looking for everyday nutrition, healthy gifting,
+            Whether you&apos;re looking for everyday nutrition, healthy gifting,
             family wellness or premium snacking, our carefully designed combos
             offer the perfect balance of quality, nutrition and value.
           </p>
@@ -55,12 +67,15 @@ export default function ComboOffersPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-20">
 
+        {loading ? (
+          <p className="text-center text-lg text-gray-500">Loading combos…</p>
+        ) : (
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
 
           {comboProducts.map((combo) => (
 
             <div
-              key={combo.id}
+              key={combo.slug}
               className="flex h-full flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-2 hover:border-[#C9A227] hover:shadow-2xl"
             >
 
@@ -80,6 +95,8 @@ export default function ComboOffersPage() {
                   {combo.badge}
 
                 </span>
+
+                <WishlistHeartButton slug={combo.slug} type="combo" />
 
               </div>
 
@@ -182,6 +199,7 @@ export default function ComboOffersPage() {
           ))}
 
         </div>
+        )}
 
       </section>
 

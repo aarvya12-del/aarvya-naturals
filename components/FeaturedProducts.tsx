@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { products } from "@/data/products";
+import { getAllProductsFromFirestore } from "@/lib/firestoreProducts";
 
-export default function FeaturedProducts() {
-  const featuredProducts = products
+export default async function FeaturedProducts() {
+  const allProducts = await getAllProductsFromFirestore();
+
+  const featuredProducts = allProducts
     .filter((product) => product.featured)
     .slice(0, 4);
 
@@ -20,7 +22,7 @@ export default function FeaturedProducts() {
           </span>
 
           <h2 className="mt-6 text-5xl font-bold text-blue-900">
-            Premium Products You'll Love
+            Premium Products You&apos;ll Love
           </h2>
 
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
@@ -37,7 +39,7 @@ export default function FeaturedProducts() {
           {featuredProducts.map((product) => (
 
             <div
-              key={product.id}
+              key={product.slug}
               className="group flex h-full flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-2 hover:border-green-500 hover:shadow-2xl"
             >
 
