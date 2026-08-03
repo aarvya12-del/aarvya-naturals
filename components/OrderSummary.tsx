@@ -1,17 +1,22 @@
 "use client";
 
+import { ShippingResult } from "@/lib/shipping";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 
+import { ShippingResult } from "@/lib/shipping";
+
 type Props = {
   shipping?: number;
   shippingCalculated?: boolean;
+  shippingInfo?: ShippingResult;
 };
 
 export default function OrderSummary({
   shipping = 0,
   shippingCalculated = false,
+  shippingInfo,
 }: Props) {
   const { cart } = useCart();
 
@@ -117,20 +122,23 @@ export default function OrderSummary({
           </span>
         </div>
 
-        {shippingCalculated && subtotal < 500 && (
-          <div className="rounded-xl border border-yellow-300 bg-yellow-100 p-3 text-sm text-yellow-900">
-            🎁 Add products worth{" "}
-            <strong>₹{500 - subtotal}</strong> more to unlock{" "}
-            <strong>FREE Delivery!</strong>
-          </div>
-        )}
+        {shippingCalculated &&
+  shippingInfo?.freeDeliveryEligible &&
+  !shippingInfo.freeDeliveryUnlocked && (
+    <div className="rounded-xl border border-yellow-300 bg-yellow-100 p-3 text-sm text-yellow-900">
+      🎁 Add products worth{" "}
+      <strong>₹{shippingInfo.amountRemaining}</strong> more to unlock{" "}
+      <strong>FREE Delivery!</strong>
+    </div>
+)}
 
-        {shippingCalculated && subtotal >= 500 && (
-          <div className="rounded-xl border border-green-300 bg-green-100 p-3 text-sm font-semibold text-green-800">
-            🎉 Congratulations! You've unlocked{" "}
-            <strong>FREE Delivery.</strong>
-          </div>
-        )}
+{shippingCalculated &&
+  shippingInfo?.freeDeliveryUnlocked && (
+    <div className="rounded-xl border border-green-300 bg-green-100 p-3 text-sm font-semibold text-green-800">
+      🎉 Congratulations! You've unlocked{" "}
+      <strong>FREE Delivery.</strong>
+    </div>
+)}
 
         <hr className="border-white/20" />
 

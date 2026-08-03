@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 
 import AddressForm from "@/components/AddressForm";
@@ -17,13 +17,27 @@ export default function CheckoutPage() {
   const { cart } = useCart();
 
   const {
-    address,
-    setAddress,
-    shippingCharge,
-    setShippingCharge,
-    shippingCalculated,
-    setShippingCalculated,
-  } = useCheckout();
+  address,
+  setAddress,
+  shippingCharge,
+  setShippingCharge,
+  shippingCalculated,
+  setShippingCalculated,
+} = useCheckout();
+
+const subtotal = useMemo(() => {
+  return cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+}, [cart]);
+
+const shippingInfo = calculateShipping(
+  subtotal,
+  address.state,
+  address.city,
+  address.pincode
+);
 
   useEffect(() => {
     async function loadDefaultAddress() {
@@ -60,13 +74,11 @@ export default function CheckoutPage() {
 
       setAddress(checkoutAddress);
 
-      const subtotal = cart.reduce(
-  (total, item) => total + item.price * item.quantity,
-  0
-);
-
-const shipping = calculateShipping(
-  subtotal,
+      const shipping = calculateShipping(
+  cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  ),
   checkoutAddress.state,
   checkoutAddress.city,
   checkoutAddress.pincode
@@ -119,6 +131,7 @@ const shipping = calculateShipping(
             <OrderSummary
   shipping={shippingCharge}
   shippingCalculated={shippingCalculated}
+  shippingInfo={shippingInfo}
 />
 
           </div>

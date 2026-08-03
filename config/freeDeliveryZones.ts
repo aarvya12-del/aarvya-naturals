@@ -1,11 +1,11 @@
 export const FREE_DELIVERY_THRESHOLD = 500;
 
 /**
- * Base Delivery Zone
+ * Zone 1
  * Around Ammankovil / Saravanampatti
  *
- * Orders below ₹500  -> ₹30 Shipping
- * Orders ₹500 & above -> FREE Delivery
+ * Shipping ₹30
+ * FREE above ₹500
  */
 export const BASE_ZONE_PINCODES = [
   "641035",
@@ -13,18 +13,74 @@ export const BASE_ZONE_PINCODES = [
 ];
 
 /**
- * Preferred Delivery Zone
+ * Zone 2
+ * Aarvya Delivery Zone
  *
- * Orders below ₹500  -> ₹50 Shipping
- * Orders ₹500 & above -> FREE Delivery
+ * Shipping ₹50
+ * FREE above ₹500
  */
 export const PREFERRED_ZONE_PINCODES = [
-  "641107", // Kovilpalayam
-  "641050", // Kalapatti
-  "641021", // Kurumbapalayam
-  "641046", // Neelambur
-  "641020", // Periyanaickenpalayam
-  "641062", // Malumichampatti / Eachanari belt
+  // Ganapathy
+  "641006",
+
+  // Peelamedu
+  "641004",
+  "641014",
+
+  // Singanallur
+  "641005",
+
+  // Saravanampatti Belt
+  "641028",
+  "641029",
+  "641032",
+  "641034",
+  "641037",
+  "641042",
+  "641045",
+
+  // Kovilpalayam / S.S. Kulam
+  "641107",
+  "641108",
+  "641109",
+  "641110",
+  "641111",
+  "641112",
+  "641113",
+  "641114",
+  "641115",
+  "641116",
+  "641117",
+  "641118",
+
+  // Neelambur
+  "641062",
+  "641063",
+
+  // Periyanaickenpalayam
+  "641020",
+  "641021",
+  "641022",
+  "641023",
+  "641024",
+  "641025",
+  "641026",
+
+  // Maruthamalai
+  "641046",
+  "641047",
+  "641048",
+
+  // Malumichampatti
+  "641050",
+  "641051",
+  "641052",
+
+  // Kuniyamuthur
+  "641008",
+
+  // Kovaipudur
+  "641042",
 ];
 
 export function isBaseZone(pincode: string): boolean {
