@@ -47,32 +47,34 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setWishlist([]);
-      setLoading(false);
-      return;
-    }
-
     async function loadWishlist() {
+      if (!user) {
+        queueMicrotask(() => {
+          setWishlist([]);
+          setLoading(false);
+        });
+        return;
+      }
+
       setLoading(true);
       const snap = await getDocs(
-        collection(db, "users", user!.uid, "wishlist")
+        collection(db, "users", user.uid, "wishlist")
       );
+
       setWishlist(
         snap.docs.map((d) => {
           const data = d.data() as { slug: string; type: WishlistItemType };
-          // Fallback for any older entries saved before "type" existed —
-          // treat them as products, which is what the old version stored.
           return {
             slug: data.slug ?? d.id,
             type: data.type ?? "product",
           };
         })
       );
+
       setLoading(false);
     }
 
-    loadWishlist();
+    void loadWishlist();
   }, [user]);
 
   function isWishlisted(slug: string, type: WishlistItemType) {

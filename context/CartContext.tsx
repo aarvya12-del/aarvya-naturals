@@ -4,9 +4,11 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   ReactNode,
 } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export type CartItem = {
   id: number;
@@ -40,18 +42,42 @@ export function CartProvider({
   children: ReactNode;
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const { user, loading } = useAuth();
+
+  // Tracks the previously-seen logged-in user, so we can tell the
+  // difference between "app just loaded" and "user actually logged
+  // out just now" — only the second case should clear the cart.
+  const prevUidRef = useRef<string | null>(null);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("aarvya-cart");
 
-    if (savedCart) {
+    if (!savedCart) return;
+
+    // Defer state update to satisfy React 19 lint rule.
+    queueMicrotask(() => {
       setCart(JSON.parse(savedCart));
-    }
+    });
   }, []);
 
   useEffect(() => {
     localStorage.setItem("aarvya-cart", JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    if (loading) return; // wait until auth state has actually resolved
+
+    const currentUid = user?.uid ?? null;
+    const wasLoggedIn = prevUidRef.current !== null;
+    const isNowLoggedOut = currentUid === null;
+
+    if (wasLoggedIn && isNowLoggedOut) {
+      setCart([]);
+      localStorage.removeItem("aarvya-cart");
+    }
+
+    prevUidRef.current = currentUid;
+  }, [user, loading]);
 
   function addToCart(item: CartItem) {
     setCart((prev) => {

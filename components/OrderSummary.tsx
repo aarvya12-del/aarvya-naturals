@@ -6,10 +6,12 @@ import { useCart } from "@/context/CartContext";
 
 type Props = {
   shipping?: number;
+  shippingCalculated?: boolean;
 };
 
 export default function OrderSummary({
   shipping = 0,
+  shippingCalculated = false,
 }: Props) {
   const { cart } = useCart();
 
@@ -105,19 +107,37 @@ export default function OrderSummary({
 
         <div className="flex justify-between">
           <span>Shipping</span>
+
           <span>
-            {shipping === 0
+            {!shippingCalculated
               ? "Calculated at Checkout"
+              : shipping === 0
+              ? "FREE"
               : `₹${shipping}`}
           </span>
         </div>
+
+        {shippingCalculated && subtotal < 500 && (
+          <div className="rounded-xl border border-yellow-300 bg-yellow-100 p-3 text-sm text-yellow-900">
+            🎁 Add products worth{" "}
+            <strong>₹{500 - subtotal}</strong> more to unlock{" "}
+            <strong>FREE Delivery!</strong>
+          </div>
+        )}
+
+        {shippingCalculated && subtotal >= 500 && (
+          <div className="rounded-xl border border-green-300 bg-green-100 p-3 text-sm font-semibold text-green-800">
+            🎉 Congratulations! You've unlocked{" "}
+            <strong>FREE Delivery.</strong>
+          </div>
+        )}
 
         <hr className="border-white/20" />
 
         <div className="flex justify-between text-2xl font-bold">
           <span>Grand Total</span>
           <span>
-            {shipping === 0
+            {!shippingCalculated
               ? "—"
               : `₹${grandTotal}`}
           </span>
@@ -128,7 +148,7 @@ export default function OrderSummary({
       <Link
         href="/review"
         className={`mt-16 block w-full rounded-full py-4 text-center text-lg font-bold transition ${
-          cart.length === 0 || shipping === 0
+          cart.length === 0 || !shippingCalculated
             ? "pointer-events-none cursor-not-allowed bg-gray-300 text-gray-600"
             : "bg-white text-[#0B3C8C] hover:bg-blue-100"
         }`}

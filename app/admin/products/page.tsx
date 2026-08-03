@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  adjustStock,
+  adjustStockUnits,
+  formatGrams,
+  formatUnits,
+  isUnitTracked,
+} from "@/lib/inventory";
 import type { Product, ProductVariant } from "@/types/product";
 import type { ComboProduct } from "@/data/comboProducts";
 import { products as staticProducts } from "@/data/products";
@@ -45,6 +52,8 @@ const emptyProduct = (): Product => ({
   bestseller: false,
   newArrival: false,
   stock: true,
+  stockGrams: 0,
+  lowStockAlertGrams: 500,
 });
 
 export default function AdminProductsPage() {
@@ -54,6 +63,18 @@ export default function AdminProductsPage() {
   const [migrating, setMigrating] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const inventoryValue = products.reduce((total, product) => {
+    if (isUnitTracked(product)) {
+      return total + (product.stockUnits ?? 0) * (product.variants[0]?.price ?? 0);
+    }
+
+    const oneKg = product.variants.find(v => v.weight.toLowerCase() === "1kg");
+    const pricePerKg = oneKg?.price ?? 0;
+
+    return total + ((product.stockGrams ?? 0) / 1000) * pricePerKg;
+  }, 0);
+
 
   useEffect(() => {
     load();
@@ -171,6 +192,17 @@ export default function AdminProductsPage() {
 
   return (
     <div>
+
+      <div className="mb-6">
+        <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm max-w-sm">
+          <p className="text-sm text-gray-500">Inventory Value</p>
+          <h2 className="mt-2 text-3xl font-bold text-green-700">
+            ₹{inventoryValue.toLocaleString("en-IN",{maximumFractionDigits:0})}
+          </h2>
+          <p className="mt-1 text-xs text-gray-400">Based on current selling price</p>
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[#0B3C8C]">Products</h1>
@@ -219,6 +251,7 @@ export default function AdminProductsPage() {
                 <th className="px-5 py-3">Category</th>
                 <th className="px-5 py-3">Starting Price</th>
                 <th className="px-5 py-3">Stock</th>
+                <th className="px-5 py-3">Inventory</th>
                 <th className="px-5 py-3">Actions</th>
               </tr>
             </thead>
@@ -239,6 +272,127 @@ export default function AdminProductsPage() {
                     >
                       {p.stock ? "In Stock" : "Out of Stock"}
                     </button>
+                  </td>
+                  <td className="px-5 py-3">
+                    {isUnitTracked(p) ? (
+                      <>
+                        <div className="flex items-center gap-2">
+                          {typeof p.stockUnits === "number" ? (
+                            <>
+                              <span
+                                className={`font-medium ${
+                                  p.stockUnits <= (p.lowStockAlertUnits ?? 5)
+                                    ? "text-red-600"
+                                    : "text-gray-700"
+                                }`}
+                              >
+                                {formatUnits(p.stockUnits)}
+                              </span>
+
+                              {p.stockUnits <= (p.lowStockAlertUnits ?? 5) && (
+                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                                  LOW
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs text-gray-400">
+                              Not tracked yet
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-1 flex gap-1">
+                          {[
+                            { label: "+1", delta: 1 },
+                            { label: "+5", delta: 5 },
+                            { label: "-1", delta: -1 },
+                          ].map((btn) => (
+                            <button
+                              key={btn.label}
+                              onClick={async () => {
+                                await adjustStockUnits(p.slug, btn.delta);
+                                setProducts((prev) =>
+                                  prev.map((row) =>
+                                    row.slug === p.slug
+                                      ? {
+                                          ...row,
+                                          stockUnits: Math.max(
+                                            0,
+                                            (row.stockUnits ?? 0) + btn.delta
+                                          ),
+                                        }
+                                      : row
+                                  )
+                                );
+                              }}
+                              className="rounded border border-gray-300 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                              {btn.label}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2">
+                          {typeof p.stockGrams === "number" ? (
+                            <>
+                              <span
+                                className={`font-medium ${
+                                  p.stockGrams <= (p.lowStockAlertGrams ?? 500)
+                                    ? "text-red-600"
+                                    : "text-gray-700"
+                                }`}
+                              >
+                                {formatGrams(p.stockGrams)}
+                              </span>
+
+                              {p.stockGrams <= (p.lowStockAlertGrams ?? 500) && (
+                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-600">
+                                  LOW
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-xs text-gray-400">
+                              Not tracked yet
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="mt-1 flex gap-1">
+                          {[
+                            { label: "+500g", delta: 500 },
+                            { label: "+1kg", delta: 1000 },
+                            { label: "-250g", delta: -250 },
+                          ].map((btn) => (
+                            <button
+                              key={btn.label}
+                              onClick={async () => {
+                                await adjustStock(p.slug, btn.delta);
+                                setProducts((prev) =>
+                                  prev.map((row) =>
+                                    row.slug === p.slug
+                                      ? {
+                                          ...row,
+                                          stockGrams: Math.max(
+                                            0,
+                                            (row.stockGrams ?? 0) + btn.delta
+                                          ),
+                                        }
+                                      : row
+                                  )
+                                );
+                              }}
+                              className="rounded border border-gray-300 px-1.5 py-0.5 text-[10px] font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                              {btn.label}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
                   </td>
                   <td className="px-5 py-3 space-x-3">
                     <button
@@ -410,6 +564,86 @@ export default function AdminProductsPage() {
                   ))}
                 </div>
               </div>
+
+              {isUnitTracked(editing) ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Current Stock (pieces)
+                    </label>
+                    <input
+                      type="number"
+                      value={editing.stockUnits ?? 0}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          stockUnits: Number(e.target.value),
+                        })
+                      }
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">
+                      This product has one pack size, so stock is a plain count.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Low Stock Alert (pieces)
+                    </label>
+                    <input
+                      type="number"
+                      value={editing.lowStockAlertUnits ?? 5}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          lowStockAlertUnits: Number(e.target.value),
+                        })
+                      }
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Current Stock (grams)
+                    </label>
+                    <input
+                      type="number"
+                      value={editing.stockGrams ?? 0}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          stockGrams: Number(e.target.value),
+                        })
+                      }
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                    />
+                    <p className="mt-1 text-xs text-gray-400">
+                      e.g. 5000 = 5 kg. Auto-reduces as orders come in.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Low Stock Alert (grams)
+                    </label>
+                    <input
+                      type="number"
+                      value={editing.lowStockAlertGrams ?? 500}
+                      onChange={(e) =>
+                        setEditing({
+                          ...editing,
+                          lowStockAlertGrams: Number(e.target.value),
+                        })
+                      }
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+                    />
+                  </div>
+                </div>
+              )}
 
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <input

@@ -53,7 +53,7 @@ export async function saveOrder({
 }: SaveOrderParams) {
   const orderData = {
     userId,
-    
+
     customer,
 
     address,
@@ -71,6 +71,17 @@ export async function saveOrder({
     razorpayPaymentId,
 
     paymentStatus: "Paid",
+
+    // Payment succeeded, so the order starts life as "Confirmed" rather
+    // than "Pending" — admin then moves it through Packed/Shipped/Delivered.
+    orderStatus: "Confirmed",
+
+    // Filled in later by the admin panel once the order ships.
+    tracking: null,
+
+    // Becomes true the moment stock is actually deducted (when the
+    // order is marked Delivered) — prevents deducting twice.
+    inventoryUpdated: false,
 
     createdAt: serverTimestamp(),
   };

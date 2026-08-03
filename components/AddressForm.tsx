@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { calculateShipping } from "@/lib/shipping";
+import { useCart } from "@/context/CartContext";
 import { lookupPincode } from "@/lib/pincode";
 
 type Address = {
@@ -28,16 +29,19 @@ type Props = {
   address: Address;
   setAddress: Dispatch<SetStateAction<Address>>;
   setShippingCharge: Dispatch<SetStateAction<number>>;
+  setShippingCalculated?: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function AddressForm({
   address,
   setAddress,
   setShippingCharge,
+  setShippingCalculated,
 }: Props) {
   const [loadingPincode, setLoadingPincode] = useState(false);
   const [pincodeError, setPincodeError] = useState("");
   const [localities, setLocalities] = useState<string[]>([]);
+  const { cart } = useCart();
 
   async function handleChange(
     e: React.ChangeEvent<HTMLInputElement>
@@ -101,25 +105,38 @@ setAddress((prev) => ({
   }
 
   useEffect(() => {
-    if (
-      address.city.trim() === "" ||
-      address.state.trim() === ""
-    ) {
-      setShippingCharge(0);
-      return;
-    }
+  if (
+    address.city.trim() === "" ||
+    address.state.trim() === ""
+  ) {
+    setShippingCharge(0);
+    setShippingCalculated?.(false);
+    return;
+  }
 
-    const shipping = calculateShipping(
-      address.state,
-      address.city
-    );
+  const subtotal = cart.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
-    setShippingCharge(shipping.charge);
-  }, [
-    address.city,
+  const shipping = calculateShipping(
+    subtotal,
     address.state,
-    setShippingCharge,
-  ]);
+    address.city,
+    address.pincode
+  );
+
+  setShippingCharge(shipping.charge);
+  setShippingCalculated?.(true);
+
+}, [
+  cart,
+  address.city,
+  address.state,
+  address.pincode,
+  setShippingCharge,
+  setShippingCalculated,
+]);
 
   return (
     <div className="rounded-3xl bg-white p-8 shadow-lg">
@@ -178,26 +195,41 @@ setAddress((prev) => ({
           className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900"
         />
 
-        <select
-  name="area"
-  value={address.area}
-  onChange={(e) =>
-    setAddress((prev) => ({
-      ...prev,
-      area: e.target.value,
-    }))
-  }
-  disabled={localities.length === 0}
-  className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900 bg-white disabled:bg-gray-100"
->
-  <option value="">Select your locality</option>
+        {localities.length > 0 ? (
+          <select
+            name="area"
+            value={address.area}
+            onChange={(e) =>
+              setAddress((prev) => ({
+                ...prev,
+                area: e.target.value,
+              }))
+            }
+            className="rounded-2xl border border-gray-300 px-5 py-4 outline-none focus:border-blue-900 bg-white"
+          >
+            <option value="">Select your locality</option>
 
-  {localities.map((locality) => (
-    <option key={locality} value={locality}>
-      {locality}
-    </option>
-  ))}
-</select>
+            {localities.map((locality) => (
+              <option key={locality} value={locality}>
+                {locality}
+              </option>
+            ))}
+          </select>
+        ) : address.area ? (
+          // A saved address already has its locality — no need to
+          // make the customer pick it again from a dropdown that
+          // (until they retype the pincode) has no options to show.
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 px-5 py-4 text-gray-700">
+            {address.area}
+          </div>
+        ) : (
+          <select
+            disabled
+            className="rounded-2xl border border-gray-300 px-5 py-4 outline-none bg-gray-100"
+          >
+            <option>Select your locality</option>
+          </select>
+        )}
 
         <div className="grid gap-6 md:grid-cols-3">
 

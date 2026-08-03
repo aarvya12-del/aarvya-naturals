@@ -6,7 +6,7 @@ export default async function FeaturedProducts() {
   const allProducts = await getAllProductsFromFirestore();
 
   const featuredProducts = allProducts
-    .filter((product) => product.featured)
+    .filter((product) => product.featured && product.stock !== false)
     .slice(0, 4);
 
   return (

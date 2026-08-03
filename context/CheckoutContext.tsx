@@ -48,9 +48,15 @@ type CheckoutContextType = {
     React.SetStateAction<CheckoutAddress | null>
   >;
 
+  // Shipping
   shippingCharge: number;
   setShippingCharge: React.Dispatch<
     React.SetStateAction<number>
+  >;
+
+  shippingCalculated: boolean;
+  setShippingCalculated: React.Dispatch<
+    React.SetStateAction<boolean>
   >;
 
   resetCheckout: () => void;
@@ -74,10 +80,15 @@ export function CheckoutProvider({
   const [shippingCharge, setShippingCharge] =
     useState(0);
 
+  const [shippingCalculated, setShippingCalculated] =
+    useState(false);
+
   function resetCheckout() {
     setAddress(emptyAddress);
     setDeliveryAddress(null);
+
     setShippingCharge(0);
+    setShippingCalculated(false);
   }
 
   return (
@@ -91,6 +102,9 @@ export function CheckoutProvider({
 
         shippingCharge,
         setShippingCharge,
+
+        shippingCalculated,
+        setShippingCalculated,
 
         resetCheckout,
       }}

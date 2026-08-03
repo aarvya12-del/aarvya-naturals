@@ -6,7 +6,7 @@ import { useCheckout } from "@/context/CheckoutContext";
 
 export default function ReviewPage() {
   const { cart } = useCart();
-  const { address, shippingCharge } = useCheckout();
+  const { address, shippingCharge, shippingCalculated } = useCheckout();
 
   const subtotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -17,7 +17,7 @@ export default function ReviewPage() {
 
   const canProceed =
     cart.length > 0 &&
-    shippingCharge > 0 &&
+    shippingCalculated &&
     !!address.fullName;
 
   return (
@@ -156,8 +156,10 @@ export default function ReviewPage() {
                 <div className="flex justify-between">
                   <span>Shipping</span>
                   <span>
-                    {shippingCharge === 0
+                    {!shippingCalculated
                       ? "Not Calculated"
+                      : shippingCharge === 0
+                      ? "FREE"
                       : `₹${shippingCharge}`}
                   </span>
                 </div>

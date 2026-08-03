@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "./globals.css";
 
@@ -18,6 +18,20 @@ export const metadata: Metadata = {
 
   description:
     "Discover premium dry fruits, healthy seeds and healthy products from Aarvya Naturals.",
+
+  manifest: "/manifest.webmanifest",
+
+  applicationName: "Aarvya Admin",
+
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Aarvya Admin",
+  },
+
+  formatDetection: {
+    telephone: false,
+  },
 
   openGraph: {
     title: "Aarvya Naturals",
@@ -44,6 +58,27 @@ export const metadata: Metadata = {
       "Premium Dry Fruits, Healthy Seeds & Healthy Products",
     images: ["/og-image.png"],
   },
+
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      {
+        url: "/icons/apple-touch-icon.png",
+        sizes: "180x180",
+      },
+    ],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

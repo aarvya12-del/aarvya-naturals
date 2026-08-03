@@ -14,6 +14,7 @@ import {
   signOut,
 } from "firebase/auth";
 
+import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
@@ -35,6 +36,7 @@ export function AuthProvider({
 }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -47,6 +49,7 @@ export function AuthProvider({
 
   const logout = async () => {
     await signOut(auth);
+    router.push("/");
   };
 
   return (

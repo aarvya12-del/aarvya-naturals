@@ -49,7 +49,28 @@ export default function AddressList() {
   }
 
   useEffect(() => {
-    loadAddresses();
+    async function fetchAddresses() {
+      if (!user) {
+        setAddresses([]);
+        return;
+      }
+
+      const q = query(
+        collection(db, "users", user.uid, "addresses"),
+        orderBy("createdAt", "desc")
+      );
+
+      const snap = await getDocs(q);
+
+      setAddresses(
+        snap.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Address),
+        }))
+      );
+    }
+
+    void fetchAddresses();
   }, [user]);
 
   async function handleSave(address: Address) {

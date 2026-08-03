@@ -8,17 +8,21 @@ import OrderSummary from "@/components/OrderSummary";
 
 import { useCheckout } from "@/context/CheckoutContext";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { db } from "@/lib/firebase";
 import { calculateShipping } from "@/lib/shipping";
 
 export default function CheckoutPage() {
   const { user } = useAuth();
+  const { cart } = useCart();
 
   const {
     address,
     setAddress,
     shippingCharge,
     setShippingCharge,
+    shippingCalculated,
+    setShippingCalculated,
   } = useCheckout();
 
   useEffect(() => {
@@ -56,16 +60,30 @@ export default function CheckoutPage() {
 
       setAddress(checkoutAddress);
 
-      const shipping = calculateShipping(
-        checkoutAddress.state,
-        checkoutAddress.city
-      );
+      const subtotal = cart.reduce(
+  (total, item) => total + item.price * item.quantity,
+  0
+);
+
+const shipping = calculateShipping(
+  subtotal,
+  checkoutAddress.state,
+  checkoutAddress.city,
+  checkoutAddress.pincode
+);
 
       setShippingCharge(shipping.charge);
+      setShippingCalculated(true);
     }
 
     loadDefaultAddress();
-  }, [user, setAddress, setShippingCharge]);
+  }, [
+    user,
+    cart,
+    setAddress,
+    setShippingCharge,
+    setShippingCalculated,
+  ]);
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] py-16">
@@ -91,6 +109,7 @@ export default function CheckoutPage() {
               address={address}
               setAddress={setAddress}
               setShippingCharge={setShippingCharge}
+              setShippingCalculated={setShippingCalculated}
             />
 
           </div>
@@ -98,8 +117,9 @@ export default function CheckoutPage() {
           <div>
 
             <OrderSummary
-              shipping={shippingCharge}
-            />
+  shipping={shippingCharge}
+  shippingCalculated={shippingCalculated}
+/>
 
           </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import AddToCartButton from "@/components/AddToCartButton";
+import { parseWeightToGrams, isUnitTracked } from "@/lib/inventory";
 import type { Product } from "@/types/product";
 
 type Props = {
@@ -15,6 +16,34 @@ export default function ProductPurchase({ product }: Props) {
 
   const [quantity, setQuantity] = useState(1);
 
+  const unitTracked = isUnitTracked(product);
+
+  // Stock is only "tracked" once an admin has explicitly set a
+  // number for this product. Until then, purchasing works exactly
+  // as before — nothing gets blocked, no messaging shown.
+  const stockTracked = unitTracked
+    ? typeof product.stockUnits === "number"
+    : typeof product.stockGrams === "number";
+
+  const available = unitTracked
+    ? product.stockUnits ?? 0
+    : product.stockGrams ?? 0;
+
+  const needed = unitTracked
+    ? quantity
+    : parseWeightToGrams(selectedVariant.weight) * quantity;
+
+  const lowStockThreshold = unitTracked
+    ? product.lowStockAlertUnits ?? 5
+    : product.lowStockAlertGrams ?? 500;
+
+  // In practice, a genuinely out-of-stock product is hidden from
+  // browsing entirely before a customer ever reaches this page —
+  // this stays only as a defensive fallback.
+  const outOfStock = stockTracked && available <= 0;
+  const insufficientStock = stockTracked && !outOfStock && needed > available;
+  const isLowStock = stockTracked && !outOfStock && available <= lowStockThreshold;
+
   function increaseQuantity() {
     setQuantity((prev) => prev + 1);
   }
@@ -27,6 +56,18 @@ export default function ProductPurchase({ product }: Props) {
 
   return (
     <div className="mt-10">
+
+      {/* Stock status — deliberately no exact numbers shown */}
+
+      {outOfStock ? (
+        <div className="mb-6 rounded-2xl bg-red-50 border border-red-200 px-5 py-3 text-red-700 font-semibold">
+          Currently Out of Stock
+        </div>
+      ) : isLowStock ? (
+        <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 px-5 py-3 text-amber-700 font-medium">
+          ⚡ Low Stock — order soon
+        </div>
+      ) : null}
 
       {/* Weight Selection */}
 
@@ -107,31 +148,47 @@ export default function ProductPurchase({ product }: Props) {
 
         </div>
 
+        {insufficientStock && (
+          <p className="mt-2 text-sm font-medium text-red-600">
+            This quantity isn&apos;t available right now — try a smaller pack or lower quantity.
+          </p>
+        )}
+
       </div>
 
       {/* Buttons */}
 
       <div className="mt-10 space-y-4">
 
-        <AddToCartButton
-          id={product.id}
-          slug={product.slug}
-          name={product.name}
-          image={product.image}
-          variant={selectedVariant.weight}
-          price={selectedVariant.price}
-          type="product"
-          quantity={quantity}
-        />
+        {outOfStock || insufficientStock ? (
+          <button
+            disabled
+            className="block w-full cursor-not-allowed rounded-full bg-gray-300 py-4 text-center text-lg font-semibold text-gray-500"
+          >
+            {outOfStock ? "Out of Stock" : "Not Available"}
+          </button>
+        ) : (
+          <AddToCartButton
+            id={product.id}
+            slug={product.slug}
+            name={product.name}
+            image={product.image}
+            variant={selectedVariant.weight}
+            price={selectedVariant.price}
+            type="product"
+            quantity={quantity}
+          />
+        )}
 
         <button
-  className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700"
-  onClick={() => {
-    alert("Checkout coming next! 🚀");
-  }}
->
-  Buy Now
-</button>
+          disabled={outOfStock || insufficientStock}
+          className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+          onClick={() => {
+            alert("Checkout coming next! 🚀");
+          }}
+        >
+          Buy Now
+        </button>
 
       </div>
 

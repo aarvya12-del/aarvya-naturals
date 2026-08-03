@@ -16,7 +16,9 @@ export default async function ProductPage({ params }: Props) {
 
   const product = await getProductBySlug(slug);
 
-  if (!product) {
+  // stock === false means an admin explicitly hid this product —
+  // treat it as if it doesn't exist, same as any other 404.
+  if (!product || product.stock === false) {
     notFound();
   }
 
@@ -26,7 +28,8 @@ export default async function ProductPage({ params }: Props) {
     .filter(
       (p) =>
         p.category === product.category &&
-        p.id !== product.id
+        p.id !== product.id &&
+        p.stock !== false
     )
     .slice(0, 3);
 

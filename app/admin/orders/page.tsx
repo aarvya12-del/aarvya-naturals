@@ -1,15 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import type { TrackingInfo } from "@/lib/orderStatus";
 
 type OrderRow = {
   id: string;
@@ -21,26 +16,18 @@ type OrderRow = {
   grandTotal: number;
   paymentStatus?: string;
   orderStatus?: string;
+  tracking?: TrackingInfo;
   createdAt?: {
     toDate: () => Date;
   };
 };
 
-const ORDER_STATUSES = [
-  "Pending",
-  "Confirmed",
-  "Packed",
-  "Shipped",
-  "Delivered",
-  "Cancelled",
-];
-
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
+    useEffect(() => {
+  async function loadOrders() {
     setLoading(true);
 
     try {
@@ -62,32 +49,10 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  async function updateStatus(orderId: string, newStatus: string) {
-    setUpdatingId(orderId);
-
-    try {
-      await updateDoc(doc(db, "orders", orderId), {
-        orderStatus: newStatus,
-      });
-
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.id === orderId ? { ...o, orderStatus: newStatus } : o
-        )
-      );
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update order status.");
-    } finally {
-      setUpdatingId(null);
-    }
   }
+
+  void loadOrders();
+}, []);
 
   return (
     <div>
@@ -106,21 +71,29 @@ export default function AdminOrdersPage() {
               <th className="px-5 py-3">Total</th>
               <th className="px-5 py-3">Payment</th>
               <th className="px-5 py-3">Order Status</th>
+              <th className="px-5 py-3">Tracking</th>
+              <th className="px-5 py-3"></th>
             </tr>
           </thead>
 
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className="border-t border-gray-100">
+              <tr
+                key={order.id}
+                className="border-t border-gray-100 transition hover:bg-blue-50/50"
+              >
                 <td className="px-5 py-4 text-gray-600">
                   {order.createdAt?.toDate?.().toLocaleDateString("en-IN") ??
                     "—"}
                 </td>
 
                 <td className="px-5 py-4">
-                  <p className="font-medium text-gray-800">
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="font-medium text-[#0B3C8C] hover:underline"
+                  >
                     {order.customer?.name ?? "—"}
-                  </p>
+                  </Link>
 
                   <p className="text-xs text-gray-500">
                     {order.customer?.mobile}
@@ -136,6 +109,8 @@ export default function AdminOrdersPage() {
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       order.paymentStatus === "Paid"
                         ? "bg-green-100 text-green-700"
+                        : order.paymentStatus?.includes("Refund")
+                        ? "bg-orange-100 text-orange-700"
                         : "bg-yellow-100 text-yellow-700"
                     }`}
                   >
@@ -144,30 +119,29 @@ export default function AdminOrdersPage() {
                 </td>
 
                 <td className="px-5 py-4">
-                  <select
-                    value={order.orderStatus ?? "Pending"}
-                    disabled={updatingId === order.id}
-                    onChange={(e) =>
-                      updateStatus(order.id, e.target.value)
-                    }
-                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-800"
+                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
+                    {order.orderStatus ?? "Pending"}
+                  </span>
+                </td>
+
+                <td className="px-5 py-4 text-gray-500">
+                  {order.tracking?.trackingNumber ? "✅ Added" : "—"}
+                </td>
+
+                <td className="px-5 py-4">
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="font-medium text-[#0B3C8C] hover:underline"
                   >
-                    {ORDER_STATUSES.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
+                    View →
+                  </Link>
                 </td>
               </tr>
             ))}
 
             {!loading && orders.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-5 py-10 text-center text-gray-400"
-                >
+                <td colSpan={7} className="px-5 py-10 text-center text-gray-400">
                   No orders yet.
                 </td>
               </tr>

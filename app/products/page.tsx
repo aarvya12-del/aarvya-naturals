@@ -14,18 +14,19 @@ function ProductsContent() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
+  // Derive directly from the URL to satisfy the React 19 lint rule.
+  const selectedCategory = categoryFromUrl;
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     getAllProductsFromFirestore()
-      .then(setProducts)
+      .then((all) => {
+        // stock === false means an admin explicitly hid it —
+        // treat missing/undefined stock as visible (default state).
+        setProducts(all.filter((p) => p.stock !== false));
+      })
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    setSelectedCategory(categoryFromUrl);
-  }, [categoryFromUrl]);
 
   const categories = [
     "All",
@@ -33,8 +34,6 @@ function ProductsContent() {
   ];
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-
     if (category === "All") {
       router.push("/products");
     } else {

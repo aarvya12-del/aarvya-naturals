@@ -55,8 +55,8 @@ export default function WishlistPage() {
   const wishlistedSlugs = (type: "product" | "combo") =>
     wishlist.filter((item) => item.type === type).map((item) => item.slug);
 
-  const wishlistedProducts = products.filter((p) =>
-    wishlistedSlugs("product").includes(p.slug)
+  const wishlistedProducts = products.filter(
+    (p) => wishlistedSlugs("product").includes(p.slug) && p.stock !== false
   );
 
   const wishlistedCombos = combos.filter((c) =>
