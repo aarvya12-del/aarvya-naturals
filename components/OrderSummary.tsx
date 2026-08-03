@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 
-import { ShippingResult } from "@/lib/shipping";
-
 type Props = {
   shipping?: number;
   shippingCalculated?: boolean;
