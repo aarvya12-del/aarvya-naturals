@@ -300,14 +300,52 @@ export default function AdminOrderDetailPage() {
                 Delivery Address
               </h2>
               <div className="mt-3 text-gray-700">
-                <p>{order.address.house}</p>
-                <p>{order.address.street}</p>
-                {order.address.area && <p>{order.address.area}</p>}
-                <p>
-                  {order.address.city}, {order.address.state} —{" "}
-                  {order.address.pincode}
-                </p>
-              </div>
+  <p>{order.address.house}</p>
+  <p>{order.address.street}</p>
+
+  {order.address.area && (
+    <p>{order.address.area}</p>
+  )}
+
+  <p>
+    {order.address.city}, {order.address.state} —{" "}
+    {order.address.pincode}
+  </p>
+
+  <div className="mt-5 flex flex-wrap gap-3">
+
+    <a
+      href={`tel:${order.customer?.mobile}`}
+      className="rounded-full bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
+    >
+      📞 Call
+    </a>
+
+    <a
+      href={`https://wa.me/91${order.customer?.mobile}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1ebe5d]"
+    >
+      💬 WhatsApp
+    </a>
+
+    <a
+      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        `${order.address.house}, ${order.address.street}, ${
+          order.address.area ?? ""
+        }, ${order.address.city}, ${order.address.state} ${order.address.pincode}`
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="rounded-full bg-[#0B3C8C] px-4 py-2 text-sm font-semibold text-white hover:bg-[#082f6a]"
+    >
+      📍 Open in Google Maps
+    </a>
+
+  </div>
+
+</div>
             </div>
           )}
 
