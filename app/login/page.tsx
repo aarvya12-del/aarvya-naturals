@@ -6,22 +6,41 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { user } = useAuth();
+  const { addToCart } = useCart();
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
   const [loading,setLoading]=useState(false);
 
-  useEffect(()=>{ if(user) router.replace("/"); },[user,router]);
+  useEffect(() => {
+  if (!user) return;
+
+  const pendingBuyNow = sessionStorage.getItem("pendingBuyNow");
+
+  if (pendingBuyNow) {
+
+    addToCart(JSON.parse(pendingBuyNow));
+
+    sessionStorage.removeItem("pendingBuyNow");
+
+    router.replace("/checkout");
+
+    return;
+  }
+
+  router.replace("/");
+
+}, [user, router, addToCart]);
 
   async function login(e:React.FormEvent){
     e.preventDefault();
     try{
       setLoading(true);
-      await signInWithEmailAndPassword(auth,email,password);
-      router.replace("/");
+      await signInWithEmailAndPassword(auth, email, password);
     }catch(error:any){
       alert(error.message);
     }finally{
@@ -32,8 +51,7 @@ export default function LoginPage() {
   async function googleLogin(){
     try{
       setLoading(true);
-      await signInWithPopup(auth,googleProvider);
-      router.replace("/");
+      await signInWithPopup(auth, googleProvider);
     }catch(error:any){
       alert(error.message);
     }finally{

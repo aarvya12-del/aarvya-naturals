@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 
 import type { ComboProduct } from "@/data/comboProducts";
 import { getComboBySlug } from "@/lib/firestoreProducts";
@@ -16,6 +20,11 @@ export default function ComboDetailsPage() {
 
   const [combo, setCombo] = useState<ComboProduct | null | undefined>(undefined);
   const [quantity, setQuantity] = useState(1);
+const router = useRouter();
+
+const { user } = useAuth();
+
+const { addToCart } = useCart();
 
   useEffect(() => {
     getComboBySlug(slug).then(setCombo);
@@ -42,20 +51,6 @@ export default function ComboDetailsPage() {
       setQuantity((prev) => prev - 1);
     }
   }
-
-  const whatsappMessage = encodeURIComponent(
-`Hi Aarvya Naturals,
-
-I'm interested in the following Combo Offer:
-
-${combo.name}
-
-Quantity : ${quantity}
-
-Please share the payment details.
-
-Thank you!`
-  );
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] py-16">
@@ -204,14 +199,32 @@ Thank you!`
                 quantity={quantity}
               />
 
-              <a
-                href={`https://wa.me/916374626691?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700"
-              >
-                Buy via WhatsApp
-              </a>
+              <button
+  className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700"
+  onClick={() => {
+
+    if (!user) {
+  router.push("/login");
+  return;
+}
+
+addToCart({
+  id: combo.id,
+  slug: combo.slug,
+  name: combo.name,
+  image: combo.image,
+  variant: "Combo Pack",
+  price: combo.price,
+  type: "combo",
+  quantity,
+});
+
+router.push("/checkout");
+
+  }}
+>
+  Buy Now
+</button>
 
             </div>
 

@@ -36,6 +36,7 @@ const emptyAddress: CheckoutAddress = {
 };
 
 type CheckoutContextType = {
+  
   // Current checkout form
   address: CheckoutAddress;
   setAddress: React.Dispatch<
@@ -82,13 +83,14 @@ export function CheckoutProvider({
 
   const [shippingCalculated, setShippingCalculated] =
     useState(false);
-
-  function resetCheckout() {
+    
+    function resetCheckout() {
     setAddress(emptyAddress);
     setDeliveryAddress(null);
 
     setShippingCharge(0);
     setShippingCalculated(false);
+    
   }
 
   return (
@@ -104,9 +106,9 @@ export function CheckoutProvider({
         setShippingCharge,
 
         shippingCalculated,
-        setShippingCalculated,
+setShippingCalculated,
 
-        resetCheckout,
+resetCheckout,
       }}
     >
       {children}

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import AddToCartButton from "@/components/AddToCartButton";
+import LoginRequiredModal from "@/components/LoginRequiredModal";
 import { parseWeightToGrams, isUnitTracked } from "@/lib/inventory";
 import type { Product } from "@/types/product";
 
@@ -10,11 +15,17 @@ type Props = {
 };
 
 export default function ProductPurchase({ product }: Props) {
+  const router = useRouter();
+
+const { user } = useAuth();
+
+const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants[0]
   );
 
   const [quantity, setQuantity] = useState(1);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const unitTracked = isUnitTracked(product);
 
@@ -184,13 +195,51 @@ export default function ProductPurchase({ product }: Props) {
           disabled={outOfStock || insufficientStock}
           className="block w-full rounded-full bg-green-600 py-4 text-center text-lg font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300"
           onClick={() => {
-            alert("Checkout coming next! 🚀");
-          }}
-        >
+
+  if (!user) {
+
+  sessionStorage.setItem(
+    "pendingBuyNow",
+    JSON.stringify({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      image: product.image,
+      variant: selectedVariant.weight,
+      price: selectedVariant.price,
+      type: "product",
+      quantity,
+    })
+  );
+
+  setShowLoginModal(true);
+  return;
+}
+
+  addToCart({
+    id: product.id,
+    slug: product.slug,
+    name: product.name,
+    image: product.image,
+    variant: selectedVariant.weight,
+    price: selectedVariant.price,
+    type: "product",
+    quantity,
+  });
+
+  router.push("/checkout");
+
+}}
+>
           Buy Now
         </button>
 
-      </div>
+            </div>
+
+      <LoginRequiredModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
 
     </div>
   );
