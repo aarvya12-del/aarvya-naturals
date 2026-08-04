@@ -57,7 +57,7 @@ export default function OrderSuccessPage() {
           </Link>
 
           <Link
-            href="/account/orders"
+            href="/orders"
             className="flex-1 rounded-full border-2 border-[#0B3C8C] py-4 text-center font-semibold text-[#0B3C8C] transition hover:bg-[#0B3C8C] hover:text-white"
           >
             View My Orders
