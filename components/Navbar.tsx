@@ -12,7 +12,7 @@ export default function Navbar() {
     <>
       <TrustBar />
 
-      <header className="sticky top-0 z-50 bg-white shadow-md">
+      <header className="sticky top-0 z-50 bg-white shadow-md relative">
 
         <div className="mx-auto flex h-24 max-w-7xl items-center justify-between pl-3 pr-6 lg:pl-4 lg:pr-8">
 
