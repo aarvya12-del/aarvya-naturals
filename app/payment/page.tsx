@@ -49,11 +49,11 @@ export default function PaymentPage() {
       setLoading(true);
 
       const response = await fetch("/api/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
           amount: grandTotal,
         }),
       });
@@ -187,7 +187,36 @@ export default function PaymentPage() {
                 razorpayPaymentId:
                   razorpayResponse.razorpay_payment_id,
               });
-
+  
+try {
+  await fetch("/api/send-order-email", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      customerName: address.fullName,
+      customerEmail: address.email,
+      customerMobile: address.mobile,
+      customerAddress: `${address.house}, ${address.street}, ${address.area}, ${address.city}, ${address.state} - ${address.pincode}`,
+      paymentId:
+        razorpayResponse.razorpay_payment_id,
+      orderId,
+      total: grandTotal,
+      items: cart.map((item) => ({
+        name: item.name,
+        variant: item.variant,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+    }),
+  });
+} catch (error) {
+  console.error(
+    "Failed to send email:",
+    error
+  );
+}
             clearCart();
 
             resetCheckout();

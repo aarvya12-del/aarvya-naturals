@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOrderConfirmationEmail } from "@/lib/notifications";
+import {
+  sendOrderConfirmationEmail,
+  sendAdminOrderNotification,
+} from "@/lib/notifications";
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json();
 
-    const result = await sendOrderConfirmationEmail(data);
+    const customerResult =
+      await sendOrderConfirmationEmail(data);
+
+    const adminResult =
+      await sendAdminOrderNotification(data);
 
     return NextResponse.json({
       success: true,
-      result,
+      customerResult,
+      adminResult,
     });
   } catch (error) {
     console.error("Order email failed:", error);
