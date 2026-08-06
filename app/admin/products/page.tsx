@@ -63,6 +63,7 @@ export default function AdminProductsPage() {
   const [migrating, setMigrating] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const inventoryValue = products.reduce((total, product) => {
     if (isUnitTracked(product)) {
@@ -190,6 +191,9 @@ export default function AdminProductsPage() {
     setEditing({ ...editing, variants });
   }
 
+  const filteredProducts = products.filter((p)=>{const q=searchTerm.toLowerCase().trim();return p.name.toLowerCase().includes(q)||p.slug.toLowerCase().includes(q)||p.category.toLowerCase().includes(q);});
+  const filteredCombos = combos.filter((c)=>{const q=searchTerm.toLowerCase().trim();return c.name.toLowerCase().includes(q)||c.slug.toLowerCase().includes(q)||c.category.toLowerCase().includes(q);});
+
   return (
     <div>
 
@@ -212,12 +216,15 @@ export default function AdminProductsPage() {
         </div>
 
         {!loading && products.length > 0 && (
+          <div className="flex items-center gap-3">
+            <input type="text" value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} placeholder="Search products or combos..." className="w-72 rounded-full border border-gray-300 px-4 py-3 focus:border-[#0B3C8C] focus:outline-none" />
           <button
             onClick={() => setEditing(emptyProduct())}
             className="rounded-full bg-[#0B3C8C] px-6 py-3 font-semibold text-white hover:bg-[#082f6a]"
           >
             + Add Product
           </button>
+          </div>
         )}
       </div>
 
@@ -256,7 +263,7 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => (
+              {filteredProducts.map((p) => (
                 <tr key={p.slug} className="border-t border-gray-100">
                   <td className="px-5 py-3 font-medium text-gray-800">{p.name}</td>
                   <td className="px-5 py-3 text-gray-600">{p.category}</td>
@@ -419,7 +426,7 @@ export default function AdminProductsPage() {
       {!loading && combos.length > 0 && (
         <>
           <h2 className="mt-10 text-xl font-semibold text-gray-700">
-            Combos ({combos.length})
+            Combos ({filteredCombos.length})
           </h2>
           <div className="mt-4 overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
             <table className="min-w-full text-sm">
@@ -432,7 +439,7 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody>
-                {combos.map((c) => (
+                {filteredCombos.map((c) => (
                   <tr key={c.slug} className="border-t border-gray-100">
                     <td className="px-5 py-3 font-medium text-gray-800">{c.name}</td>
                     <td className="px-5 py-3 text-gray-600">{c.category}</td>
