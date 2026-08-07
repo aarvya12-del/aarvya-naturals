@@ -20,6 +20,7 @@ export {
   ChevronDown,
   ChevronRight,
   CircleUserRound,
+  SlidersHorizontal,
   MessageCircle,
 
   // Suggestion box
